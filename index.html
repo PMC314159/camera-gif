@@ -212,12 +212,14 @@
     }return lines.slice(0,14);
   }
   function paintBubble(b){
-    const c=b.canvas,ctx=c.getContext('2d'),font=b.font||18,maxW=b.width||250;
-    const padX=19,padY=15,lineH=font*1.40;
+    // b.width는 최대 폭이 아니라 말풍선 본체의 실제 폭이에요.
+    // 내용이 짧더라도 설정한 너비를 그대로 사용하고, 길면 줄바꿈해 높이를 늘려요.
+    const c=b.canvas,ctx=c.getContext('2d'),font=b.font||18;
+    const w=bClamp(Number(b.width)||260,80,450);
+    const padX=17,padY=15,lineH=font*1.40;
     ctx.font=`600 ${font}px -apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif`;
-    const lines=bubbleLines(ctx,b.text||' ',maxW-padX*2);
-    const longest=Math.max(48,...lines.map(t=>ctx.measureText(t).width));
-    const w=Math.min(maxW,Math.max(85,Math.ceil(longest+padX*2))),h=Math.max(51,Math.ceil(lines.length*lineH+padY*2));
+    const lines=bubbleLines(ctx,b.text||' ',Math.max(20,w-padX*2));
+    const h=Math.max(51,Math.ceil(lines.length*lineH+padY*2));
     const e=19,r=21,x=e,y=e;
     c.width=w+e*2;c.height=h+e*2;b.drawWidth=w;b.drawHeight=h;
     ctx.clearRect(0,0,c.width,c.height);
@@ -248,11 +250,16 @@
       <label class="visibility-toggle"><input type="checkbox" data-bubble-key="visible" ${b.visible?'checked':''}> 이 말풍선 표시</label>
       <div class="field"><label>메시지 유형</label><select data-bubble-key="side"><option value="sent" ${b.side==='sent'?'selected':''}>보낸 메시지 · 투명 유리 / 흰 글자</option><option value="received" ${b.side==='received'?'selected':''}>받은 메시지 · 흰 말풍선 / 투명 글자</option></select></div>
       <div class="field"><label>내용 · 이모지와 줄바꿈 가능</label><textarea data-bubble-key="text" rows="2">${escapeHTML(b.text)}</textarea></div>
-      <div class="grid2"><div class="field"><label>말풍선 폭 (px)</label><input type="number" data-bubble-key="width" min="110" max="450" value="${b.width}"></div><div class="field"><label>글씨 크기 (px)</label><input type="number" data-bubble-key="font" min="12" max="38" value="${b.font}"></div></div>
+      <div class="grid2"><div class="field"><label>말풍선 실제 폭 (px)</label><input type="number" data-bubble-key="width" min="80" max="450" value="${b.width}"></div><div class="field"><label>글씨 크기 (px)</label><input type="number" data-bubble-key="font" min="12" max="38" value="${b.font}"></div></div>
+      <div class="field"><label>말풍선 폭 슬라이더 · 좁히면 자동 줄바꿈</label><div class="range-row"><input type="range" data-bubble-key="width" data-bubble-width-slider min="80" max="450" step="1" value="${b.width}"><span class="value" data-bubble-width-value>${b.width}px</span></div></div>
       <div class="grid2"><div class="field"><label>가로 위치</label><input type="range" data-bubble-key="x" min="0" max="540" value="${b.x}"></div><div class="field"><label>세로 위치</label><input type="range" data-bubble-key="y" min="0" max="1100" value="${b.y}"></div></div>
       <div class="field"><label>추가 등장 지연 (초)</label><div class="range-row"><input type="range" data-bubble-key="delay" min="0" max="3" step="0.1" value="${b.delay}"><span class="value" data-bubble-delay-label>${(+b.delay).toFixed(1)}s</span></div></div>`;
     b.editor=box;bubbleEditors.appendChild(box);
-    box.addEventListener('input',e=>bubbleInput(e,b));box.addEventListener('change',e=>bubbleInput(e,b));
+    box.addEventListener('input',e=>bubbleInput(e,b));box.addEventListener('change',e=>{
+      bubbleInput(e,b);
+      if(e.target.dataset.bubbleKey==='width')e.target.value=b.width;
+      if(e.target.dataset.bubbleKey==='font')e.target.value=b.font;
+    });
     box.querySelector('[data-bubble-delete]').addEventListener('click',()=>{
       b.el.remove();box.remove();bubbles=bubbles.filter(x=>x!==b);updateCanvasLayout();startTime=performance.now();
     });
@@ -261,8 +268,19 @@
     const key=e.target.dataset.bubbleKey;if(!key)return;
     if(key==='visible')b.visible=e.target.checked;
     else if(key==='text'||key==='side')b[key]=e.target.value;
-    else b[key]=Number(e.target.value);
-    if(key==='width')b.width=bClamp(b.width,110,450);
+    else {
+      // 숫자 입력 도중 잠깐 빈 칸이 되어도 너비를 강제로 바꾸지 않아요.
+      const next=Number(e.target.value);
+      if(e.target.value.trim()==='' || !Number.isFinite(next))return;
+      b[key]=next;
+    }
+    if(key==='width'){
+      b.width=bClamp(Math.round(b.width),80,450);
+      b.editor.querySelectorAll('[data-bubble-key="width"]').forEach(input=>{
+        if(input!==e.target || input.type==='range')input.value=b.width;
+      });
+      b.editor.querySelector('[data-bubble-width-value]').textContent=b.width+'px';
+    }
     if(key==='font')b.font=bClamp(b.font,12,38);
     if(key==='delay')b.editor.querySelector('[data-bubble-delay-label]').textContent=b.delay.toFixed(1)+'s';
     paintBubble(b);positionBubble(b);updateCanvasLayout();startTime=performance.now();
