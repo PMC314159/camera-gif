@@ -1,2337 +1,308 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111017">
-<title>GLASS MESSAGE · MOTION MAKER</title>
-<script defer src="https://cdn.jsdelivr.net/npm/gif.js.optimized@1.0.1/dist/gif.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.js"></script>
+<meta name="theme-color" content="#101117">
+<title>PHONE SCREEN MOTION MAKER</title>
+<script src="https://cdn.jsdelivr.net/npm/gif.js.optimized@1.0.1/dist/gif.js"></script>
+<script src="./export-renderer.js?v=20261013-bubble-v2"></script>
 <style>
-:root {
-  color-scheme: dark;
-  --bg: #100f15;
-  --panel: #1a1921;
-  --line: rgba(255,255,255,.10);
-  --muted: #a7a4b4;
-  --ink: #f5f4fa;
-  --lav: #c6bed8;
-}
-* {box-sizing:border-box}
-html,body {
-  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
-  font:13px/1.5 Inter,Pretendard,"Apple SD Gothic Neo",
-  -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-button,input,select,textarea {font:inherit}
-button {cursor:pointer;color:inherit}
-button:disabled {opacity:.45;cursor:wait}
-input,select,textarea {min-width:0;outline:none}
-.app {
-  display:grid;grid-template-columns:390px minmax(0,1fr);
-  gap:16px;padding:14px;min-height:100vh;align-items:start;
-}
-.sidebar {
-  position:sticky;top:14px;max-height:calc(100vh - 28px);
-  overflow:auto;scrollbar-width:thin;
-  scrollbar-color:#45414f transparent;
-  border:1px solid var(--line);border-radius:20px;
-  padding:18px;background:rgba(28,26,36,.94);
-  box-shadow:0 25px 65px rgba(0,0,0,.22);
-}
-.brand {
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:15px;gap:10px;
-}
-.brand h1 {margin:0;font-size:17px;font-weight:720;letter-spacing:.015em}
-.brand small {display:block;color:var(--muted);font-size:10px;margin-top:3px}
-.brand-deco {
-  width:34px;height:34px;border:1px solid rgba(255,255,255,.35);
-  border-radius:13px;display:grid;place-items:center;
-  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.02));
-  box-shadow:inset 0 1px rgba(255,255,255,.4);font-size:17px;
-}
-.editor-tools {
-  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;
-}
-.tiny-button {
-  border:1px solid var(--line);background:rgba(255,255,255,.05);
-  border-radius:10px;padding:8px 10px;font-size:11px;color:#d5d2dd;
-}
-details.section {border-top:1px solid var(--line)}
-details.section>summary {
-  list-style:none;display:flex;align-items:center;
-  justify-content:space-between;gap:8px;padding:15px 1px;
-  cursor:pointer;font-weight:690;letter-spacing:.025em;font-size:12px;
-}
-details.section>summary::-webkit-details-marker {display:none}
-details.section>summary:after {
-  content:'+';font-weight:400;color:var(--muted);font-size:17px;
-}
-details.section[open]>summary:after {content:'−'}
-.section-body {padding:0 1px 15px}
-.field {display:grid;gap:6px;margin:0 0 13px}
-.field:last-child {margin-bottom:0}
-.field>label,.mini-label {font-size:11px;color:#b2adbf}
-.field input[type=text],
-.field input[type=number],
-.field select,
-.field textarea {
-  width:100%;border:1px solid rgba(255,255,255,.12);
-  background:#121219;border-radius:11px;
-  padding:10px 11px;color:#fff;
-}
-.field textarea {min-height:68px;line-height:1.55;resize:vertical}
-.field input[type=file] {max-width:100%;font-size:11px;color:#cac6d3}
-.field input[type=range] {
-  width:100%;accent-color:#d0c7e0;margin:0;
-}
-.rlabel {display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.rlabel output {
-  font-size:10px;color:#e6dfef;font-variant-numeric:tabular-nums;
-}
-.two {
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
-}
-.two>.field {margin-bottom:10px}
-.line {height:1px;background:var(--line);margin:11px 0}
-.hint {
-  font-size:10px;color:#aaa5b6;line-height:1.55;margin:7px 0 11px;
-}
-.check {
-  display:flex;align-items:center;gap:8px;font-size:11px;
-  color:#d8d3df;margin:6px 0 12px;cursor:pointer;
-}
-.check input {accent-color:#cfc5e1;width:15px;height:15px}
-.segment {
-  display:grid;grid-template-columns:1fr 1fr;
-  border:1px solid var(--line);border-radius:12px;
-  padding:3px;background:#111017;gap:3px;
-}
-.segment button {
-  border:0;background:transparent;border-radius:9px;
-  padding:10px 3px;color:#9d98ab;font-size:12px;
-}
-.segment button.active {
-  background:#d6d0e0;color:#201d29;font-weight:720;
-}
-#bubbleList {display:grid;gap:8px;margin-bottom:11px}
-.bubble-card {
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:13px;overflow:hidden;
-  background:rgba(255,255,255,.025);
-}
-.bubble-card[open] {border-color:rgba(207,193,226,.37)}
-.bubble-card>summary {
-  list-style:none;display:flex;align-items:center;
-  gap:9px;cursor:pointer;padding:11px 10px;
-}
-.bubble-card>summary::-webkit-details-marker {display:none}
-.bubble-number {
-  width:24px;height:24px;border-radius:8px;display:grid;
-  place-items:center;background:rgba(255,255,255,.09);font-size:10px;
-}
-.bubble-card strong {font-size:11px;font-weight:660}
-.bubble-snippet {
-  flex:1;min-width:0;color:#9d98aa;font-size:10px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.bubble-form {padding:2px 11px 12px}
-.bubble-actions {display:flex;gap:6px;margin:4px 0 10px}
-.bubble-actions button {
-  flex:1;background:rgba(255,255,255,.07);
-  border:1px solid var(--line);border-radius:8px;
-  padding:7px 5px;font-size:10px;
-}
-.add-bubble {
-  display:block;width:100%;border:1px dashed rgba(255,255,255,.3);
-  border-radius:11px;background:rgba(255,255,255,.055);
-  padding:12px;color:#e5dfec;font-size:12px;
-}
-.section-sub {
-  font-size:10px;color:#aea8bd;
-  letter-spacing:.08em;font-weight:700;margin:14px 0 10px;
-}
-.buttons {
-  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px;
-}
-.buttons button {
-  border-radius:11px;padding:11px 7px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.07);font-size:11px;
-}
-.buttons .primary {
-  background:#f2eef7;color:#1c1823;font-weight:760;
-}
-.status {
-  min-height:18px;margin-top:12px;font-size:11px;
-  color:#d4cada;line-height:1.5;white-space:pre-wrap;
-}
-.save-ready {
-  display:none;margin-top:9px;padding:10px;
-  border:1px solid rgba(255,255,255,.16);border-radius:12px;
-}
-.save-ready.show {display:block}
-.save-ready button {
-  width:100%;border:0;background:#f4f0f7;
-  color:#17151c;padding:10px;border-radius:9px;font-weight:700;
-}
-.notice {
-  font-size:10px;color:#8f8a9b;
-  line-height:1.7;margin:16px 0 2px;
-}
-.stage {
-  position:sticky;top:14px;height:calc(100vh - 28px);
-  min-height:450px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:11px;
-  border-radius:20px;border:1px solid rgba(255,255,255,.06);
-  background:radial-gradient(ellipse at 40% 18%,rgba(129,112,158,.13),transparent 48%),#131119;
-  padding:16px;overflow:hidden;
-}
-.canvas-wrap {
-  width:min(100%,670px);display:flex;align-items:center;
-  justify-content:center;min-height:0;flex:1;
-}
-#preview {
-  display:block;max-width:100%;max-height:100%;
-  width:auto;height:auto;object-fit:contain;
-  box-shadow:0 25px 70px rgba(0,0,0,.47);
-  touch-action:none;cursor:grab;border-radius:2px;
-}
-#preview:active {cursor:grabbing}
-.stage-caption {
-  font-size:11px;text-align:center;
-  color:#96909f;line-height:1.5;
-}
-.stage-caption b {color:#d6d0e0;font-weight:600}
-.stage-cta {display:flex;gap:8px;justify-content:center}
-.stage-cta button {
-  border:1px solid rgba(255,255,255,.13);
-  background:rgba(255,255,255,.055);
-  border-radius:10px;padding:8px 13px;font-size:11px;
-}
-@media(max-width:980px) {
-  .app {grid-template-columns:1fr;gap:14px}
-  .stage {
-    position:relative;top:0;height:auto;min-height:0;
-    max-height:none;order:0;padding:12px;
-  }
-  .sidebar {
-    position:relative;top:auto;max-height:none;order:1;
-  }
-  .canvas-wrap {max-height:min(68vh,720px);min-height:0}
-  .canvas-wrap canvas {max-height:min(68vh,720px)}
-}
-@media(max-width:480px) {
-  .app {padding:9px}
-  .sidebar {padding:15px;border-radius:15px}
-  .stage {border-radius:15px}
-  .brand h1 {font-size:15px}
-  .canvas-wrap {max-height:65vh}
-}
+  :root{color-scheme:dark;--bg:#0e1016;--panel:#1a1c25;--line:rgba(255,255,255,.115);--muted:#aaadb9;--text:#f6f6f8}
+  *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
+  body{background:radial-gradient(circle at 83% 11%,#222638 0,transparent 40%),radial-gradient(circle at 0% 99%,#202332 0,transparent 38%),var(--bg)}
+  input,button,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:wait;opacity:.5}
+  .app{display:grid;grid-template-columns:minmax(340px,420px) minmax(0,1fr);gap:18px;padding:16px;min-height:100dvh;height:100dvh}
+  .panel{height:calc(100dvh - 32px);overflow:auto;background:rgba(24,26,34,.95);border:1px solid var(--line);border-radius:22px;padding:17px 19px 25px;box-shadow:0 25px 70px #0005;scrollbar-color:#545866 transparent;scrollbar-width:thin}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}h1{font-size:16px;letter-spacing:.075em;font-weight:720;margin:0}header small{font-size:10px;letter-spacing:.04em;color:#8f94a0}
+  .intro{font-size:11px;line-height:1.75;color:var(--muted);margin:0 0 14px}
+  details{border-top:1px solid var(--line);padding:0}details:last-of-type{border-bottom:1px solid var(--line)}summary{padding:15px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:750;letter-spacing:.04em;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:'＋';font-size:15px;font-weight:400;color:#a7abb7}details[open]>summary:after{content:'－'}
+  .contents{padding:0 0 17px}.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .field{display:block;min-width:0;margin:0 0 11px}.field>span,.caption{display:block;font-size:11px;color:#afb2bf;margin:0 0 7px}.hint{color:#9295a3;line-height:1.65;font-size:10px;margin:4px 0 12px}.mini-heading{font-size:10px;color:#999eac;letter-spacing:.12em;text-transform:uppercase;font-weight:750;margin:12px 0 10px}
+  input[type="text"],input[type="number"],input[type="date"],select,textarea{background:#101218;border:1px solid #393b49;border-radius:10px;padding:9px 10px;color:#f4f4f6;width:100%;min-width:0;outline:none;font-size:12px;line-height:1.4}textarea{resize:vertical;min-height:70px}input[type="file"]{width:100%;font-size:11px;color:#a8abb9;max-width:100%}input[type="color"]{width:100%;height:39px;padding:3px;border:1px solid #363944;border-radius:10px;background:#101218}input[type="range"]{width:100%;accent-color:#cdd9ef;cursor:pointer;margin:5px 0 8px}
+  .range-label{display:flex;align-items:center;justify-content:space-between;gap:8px}.range-label em{font-size:10px;color:#e7e9ee;font-style:normal;white-space:nowrap}
+  .switch-line{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:550;margin-bottom:10px;color:#e3e3e9}.switch-line input{accent-color:#dce5ff;width:16px;height:16px;margin:0}
+  .widget-editor{padding:12px 12px 4px;border:1px solid #373a47;background:#141721;border-radius:13px;margin-bottom:12px}
+  .widget-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.widget-title strong{font-size:12px}.widget-title .switch-line{font-size:11px;margin:0;color:#adb4c1}
+  .bubble-item{padding:12px 12px 1px;border:1px solid #434655;background:#141720;border-radius:14px;margin-bottom:11px}
+  .bubble-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.bubble-top .switch-line{margin:0}.bubble-top strong{font-size:11px}.bubble-actions{display:flex;align-items:center;gap:7px}
+  .small{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid #484b5a;background:#292d39;color:#efeff2}
+  .add{width:100%;border:1px dashed #6a7182;border-radius:12px;background:#222634;color:#f0f3f9;font-size:12px;padding:11px;margin:2px 0 12px}
+  .pillnote{border:1px solid #353947;border-radius:12px;padding:11px;color:#b7bfce;background:#181c27;font-size:11px;line-height:1.65}
+  .preview-area{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;background:rgba(10,12,19,.32);border:1px solid rgba(255,255,255,.06);border-radius:23px;padding:17px;overflow:hidden}
+  .preview-heading{width:100%;display:flex;align-items:center;justify-content:space-between;max-width:850px;gap:10px;color:#c7ccd7;font-size:11px}.preview-heading strong{letter-spacing:.12em;font-size:11px}.preview-heading span{color:#9da4b4}
+  .canvas-space{flex:1;min-height:0;min-width:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  canvas#scene{display:block;border-radius:4px;touch-action:none;box-shadow:0 24px 90px #0008;max-width:100%;max-height:100%;cursor:grab}canvas#scene.dragging{cursor:grabbing}
+  .preview-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.preview-bar button,.action{border:1px solid #434655;background:#252936;color:#f1f2f6;padding:10px 14px;border-radius:12px;font-size:12px}.preview-bar button:hover,.action:hover{background:#373b4a}
+  .actions{margin-top:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.action.primary{background:#f0f2f6;color:#1a1e27;border:1px solid #fff;font-weight:750}
+  .status{font-size:11px;line-height:1.6;color:#b0b5c2;min-height:24px;margin:10px 0 0}
+  #shareBtn{display:none;margin-top:8px;width:100%;background:#d9e0ef;color:#121521;border:none;border-radius:12px;padding:12px;font-weight:700}
+  .footer-note{font-size:10px;line-height:1.7;color:#8d929d;margin-top:15px}.footer-note a{color:#d9e6fa}
+  .collapse-tools{display:flex;gap:7px;margin-bottom:7px}.collapse-tools button{flex:1}
+  @media(max-width:920px){.app{display:flex;flex-direction:column;height:auto;min-height:100dvh;padding:10px;gap:12px}.panel{order:2;height:auto;max-height:none;padding:16px}.preview-area{order:1;min-height:65dvh;height:65dvh;padding:11px;border-radius:18px}.preview-heading{font-size:10px}.preview-area .preview-heading span{max-width:50%;text-align:right}.canvas-space{min-height:0}}
+  @media(max-width:480px){.preview-area{min-height:72dvh;height:72dvh}.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.action{font-size:11px;padding:11px 6px}.panel{border-radius:17px}}
 </style>
 </head>
 <body>
-<main class="app">
-<aside class="sidebar">
+<div class="app">
+  <aside class="panel">
+    <header><h1>PHONE SCREEN MOTION MAKER</h1><small>GLASS MESSAGE · V2</small></header>
+    <p class="intro">휴대폰 화면 위에 투명한 유리 위젯과 메시지 말풍선을 올려 보세요. 미리보기에서 팝업을 드래그하면 위치가 바뀌어요.</p>
+    <div class="collapse-tools"><button class="small" id="openAll">전체 펼치기</button><button class="small" id="closeAll">전체 접기</button></div>
 
-<div class="brand">
-  <div>
-    <h1>GLASS MESSAGE</h1>
-    <small>camera & phone motion maker</small>
-  </div>
-  <div class="brand-deco">◇</div>
+    <details open><summary>배경 · 화면 비율</summary><div class="contents">
+      <label class="field"><span>폰 뒤 배경 이미지</span><input type="file" accept="image/*" data-img="bg"></label>
+      <label class="field"><span>배경 비율</span><select id="ratio"><option value="9:16">기존 세로형 · 9:16</option><option value="1:1">정사각형 · 1:1</option><option value="4:5">세로형 · 4:5</option><option value="3:4">세로형 · 3:4</option><option value="16:9">가로형 · 16:9</option><option value="custom">직접 설정</option></select></label>
+      <div class="row" id="customSize" style="display:none"><label class="field"><span>너비(px)</span><input id="customW" type="number" min="300" max="1600" value="720"></label><label class="field"><span>높이(px)</span><input id="customH" type="number" min="300" max="2200" value="1280"></label></div>
+      <div class="row"><label class="field"><span>바탕 색상</span><input type="color" data-key="bgColor" value="#5b6d88"></label><label class="field"><span>배경 어둡기</span><input type="range" data-key="bgShade" min="0" max="75" value="22"></label></div>
+      <div class="row"><label class="field"><span>배경 확대 <em class="rangevalue" data-val="bgZoom"></em></span><input type="range" data-key="bgZoom" min="0.8" max="2.5" step="0.01" value="1"></label><label class="field"><span>배경 흐리기 <em class="rangevalue" data-val="bgBlur"></em></span><input type="range" data-key="bgBlur" min="0" max="36" value="7"></label></div>
+      <div class="row"><label class="field"><span>배경 가로 위치</span><input type="range" data-key="bgX" min="-45" max="45" value="0"></label><label class="field"><span>배경 세로 위치</span><input type="range" data-key="bgY" min="-45" max="45" value="0"></label></div>
+    </div></details>
+
+    <details open><summary>휴대폰 · 메인 일러스트</summary><div class="contents">
+      <label class="field"><span>휴대폰 내부 일러스트</span><input type="file" accept="image/*" data-img="art"></label>
+      <label class="field"><span>페어명 · 화면 상단</span><input type="text" data-key="pairName" placeholder="페어명 (공백이면 숨김)"></label>
+      <div class="row"><label class="field"><span>휴대폰 크기</span><input type="range" data-key="phoneScale" min="60" max="135" value="93"></label><label class="field"><span>화면 어둡기</span><input type="range" data-key="phoneShade" min="0" max="65" value="30"></label></div>
+      <div class="row"><label class="field"><span>휴대폰 가로 위치</span><input type="range" data-key="phoneX" min="-40" max="40" value="0"></label><label class="field"><span>휴대폰 세로 위치</span><input type="range" data-key="phoneY" min="-40" max="40" value="0"></label></div>
+      <div class="row"><label class="field"><span>일러스트 확대</span><input type="range" data-key="artZoom" min=".65" max="2.3" step=".01" value="1"></label><label class="field"><span>일러스트 가로</span><input type="range" data-key="artX" min="-60" max="60" value="0"></label></div>
+      <label class="field"><span>일러스트 세로 위치</span><input type="range" data-key="artY" min="-60" max="60" value="0"></label>
+    </div></details>
+
+    <details open><summary>기존 팝업 · 표시 / 위치</summary><div class="contents">
+      <p class="hint">체크를 해제한 팝업은 미리보기와 PNG·GIF·MP4에서 모두 사라집니다. 체크된 팝업은 화면에서 직접 이동할 수 있어요.</p>
+      <div class="widget-editor"><div class="widget-title"><strong>검색창</strong><label class="switch-line"><input type="checkbox" data-widget="search" data-wkey="visible" checked>표시</label></div>
+        <label class="field"><span>검색할 문구</span><input data-key="searchText" type="text" value="With suggestions"></label>
+        <label class="field"><span>타이핑 속도</span><input data-key="typingSpeed" type="range" min="3" max="35" value="14"></label>
+        <div data-widget-position="search"></div>
+      </div>
+      <div class="widget-editor"><div class="widget-title"><strong>음악 플레이어</strong><label class="switch-line"><input type="checkbox" data-widget="music" data-wkey="visible" checked>표시</label></div>
+        <label class="field"><span>앨범 커버</span><input type="file" accept="image/*" data-img="cover"></label>
+        <div class="row"><label class="field"><span>노래 제목</span><input data-key="song" type="text" value="Midnight Hour"></label><label class="field"><span>아티스트</span><input data-key="artist" type="text" value="Pair Theme"></label></div>
+        <label class="field"><span>재생바 진행도</span><input type="range" data-key="progress" min="0" max="95" value="24"></label>
+        <label class="switch-line"><input type="checkbox" data-key="showQueue">아래 추가곡 표시</label>
+        <label class="field"><span>추가곡 (줄마다 한 곡, 최대 2곡)</span><textarea data-key="queueText" rows="2">Our Story&#10;Something About Us</textarea></label>
+        <div data-widget-position="music"></div>
+      </div>
+      <div class="widget-editor"><div class="widget-title"><strong>D-DAY 위젯</strong><label class="switch-line"><input type="checkbox" data-widget="dday" data-wkey="visible" checked>표시</label></div>
+        <div class="row"><label class="field"><span>라벨</span><input data-key="ddayLabel" type="text" value="OUR DAY"></label><label class="field"><span>기념 날짜 (선택)</span><input data-key="ddayDate" type="date"></label></div>
+        <label class="field"><span>카운터 속도 (990 → 1000)</span><input data-key="flipSpeed" type="range" min=".12" max=".65" step=".01" value=".24"></label>
+        <div data-widget-position="dday"></div>
+      </div>
+      <div class="widget-editor"><div class="widget-title"><strong>미니 포스트</strong><label class="switch-line"><input type="checkbox" data-widget="post" data-wkey="visible">표시</label></div>
+        <label class="field"><span>포스트 이미지</span><input type="file" accept="image/*" data-img="post"></label>
+        <div class="row"><label class="field"><span>계정명</span><input data-key="postUser" type="text" value="OUR MOMENTS"></label><label class="field"><span>이미지 확대</span><input data-key="postZoom" type="range" min=".7" max="2.2" step=".01" value="1"></label></div>
+        <label class="field"><span>캡션</span><textarea data-key="postCaption">Our little universe.</textarea></label>
+        <div class="row"><label class="field"><span>이미지 가로</span><input type="range" data-key="postX" min="-60" max="60" value="0"></label><label class="field"><span>이미지 세로</span><input type="range" data-key="postY" min="-60" max="60" value="0"></label></div>
+        <div data-widget-position="post"></div>
+      </div>
+      <label class="field"><span>위젯 유리 불투명도</span><input data-key="glassOpacity" type="range" min="2" max="70" value="21"></label>
+    </div></details>
+
+    <details open><summary>유리 메시지 말풍선</summary><div class="contents">
+      <div class="pillnote">보낸 메시지: 투명 유리 + 흰색 글자/이모지. 받은 메시지: 흰색 말풍선 + 배경이 비쳐 보이는 투명 글자. 두 종류 모두 꼬리 방향이 다릅니다.</div>
+      <div class="field" style="margin-top:12px"><span>말풍선 공통 글씨 크기</span><input type="range" data-key="bubbleFont" min="16" max="43" value="25"></div>
+      <div id="bubbleList"></div>
+      <button id="addBubble" class="add">＋ 메시지 말풍선 추가</button>
+      <p class="hint">각 말풍선마다 표시 여부·보낸/받은 메시지·문구·크기·위치·등장 지연을 따로 설정할 수 있습니다.</p>
+    </div></details>
+
+    <details open><summary>팝업 애니메이션 · 저장</summary><div class="contents">
+      <div class="row"><label class="field"><span>등장 효과</span><select data-key="effect"><option value="pop">Pop · 가볍게 튀어나오기</option><option value="fade">Fade · 서서히</option><option value="float">Float · 떠오르기</option><option value="slide">Slide · 아래에서 위로</option><option value="instant">즉시 나타나기</option></select></label><label class="field"><span>애니메이션 FPS</span><select id="fps"><option value="8">8 fps</option><option value="12" selected>12 fps</option><option value="15">15 fps</option><option value="20">20 fps</option><option value="24">24 fps</option></select></label></div>
+      <div class="row"><label class="field"><span>첫 팝업 지연</span><input type="range" data-key="firstDelay" min="0" max="2" step=".1" value=".3"></label><label class="field"><span>팝업 등장 간격</span><input type="range" data-key="stagger" min=".2" max="2" step=".1" value=".65"></label></div>
+      <div class="row"><label class="field"><span>팝업 등장 속도</span><input type="range" data-key="motionDuration" min=".12" max="1.5" step=".05" value=".53"></label><label class="field"><span>마지막 화면 유지</span><input type="range" data-key="finalHold" min=".6" max="3.5" step=".1" value="1.7"></label></div>
+      <label class="field"><span>GIF / 영상 출력 해상도</span><select id="renderScale"><option value=".7">70% · 모바일 경량</option><option value="1" selected>100% · 원본</option><option value="1.25">125% · 고화질</option><option value="1.5">150% · 초고화질</option></select></label>
+      <label class="switch-line"><input type="checkbox" data-key="showCommission" checked>커미션주 표기 사용</label>
+      <label class="field"><span>커미션주 계정 (빈칸이면 표시하지 않음)</span><input type="text" data-key="commission" placeholder="@account"></label>
+      <div class="actions"><button id="savePng" class="action">PNG 저장</button><button id="saveGif" class="action">GIF 저장</button><button id="saveMp4" class="action primary">MP4 저장</button></div>
+      <button id="shareBtn">아이폰 · 파일 공유 / 저장</button>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <div class="footer-note">완성한 이미지를 게시할 때에는 이 사이트 또는 사이트가 공유된 원 게시물의 출처를 남겨주세요. PC 편집을 권장합니다.<br>When posting, please credit this site or its original post. PC editing is recommended.<br><br>귀멸의 칼날 · 나의 히어로 아카데미아, 가비지타임 성준수, ‘괴담에 떨어져도 출근을 해야 하는구나’ 이자헌 드림의 사용을 금지합니다.</div>
+    </div></details>
+  </aside>
+
+  <main class="preview-area">
+    <div class="preview-heading"><strong>LIVE PREVIEW</strong><span id="sizeLabel">720 × 1280 · 9:16</span></div>
+    <div class="canvas-space" id="canvasSpace"><canvas id="scene" width="720" height="1280" aria-label="페어틀 미리보기 · 팝업을 드래그하여 위치를 변경할 수 있습니다"></canvas></div>
+    <div class="preview-bar"><button id="replay">↻ 다시 재생</button><button id="pause">Ⅱ 일시정지</button><button id="finalView">최종 장면 보기</button></div>
+  </main>
 </div>
-
-<div class="editor-tools">
-  <button id="expandAll" class="tiny-button">전체 펼치기</button>
-  <button id="collapseAll" class="tiny-button">전체 접기</button>
-</div>
-
-<details class="section" open>
-<summary>LAYOUT · 전체 화면</summary>
-<div class="section-body">
-  <div class="field">
-    <label>프레임 종류</label>
-    <div class="segment">
-      <button data-mode="camera" class="active">카메라</button>
-      <button data-mode="phone">휴대폰</button>
-    </div>
-  </div>
-  <div class="two">
-    <div class="field">
-      <label>화면 비율</label>
-      <select id="ratio">
-        <option value="1">1:1 · 정사각형</option>
-        <option value="1.25">4:5 · 세로형</option>
-        <option value="1.77777778">9:16 · 세로형</option>
-        <option value="0.5625">16:9 · 가로형</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>이미지 파일 해상도</label>
-      <select id="pngSize">
-        <option value="1080">1080 px</option>
-        <option value="1440">1440 px</option>
-        <option value="2160">2160 px</option>
-      </select>
-    </div>
-  </div>
-
-  <label class="check">
-    <input id="showCorners" type="checkbox" checked>
-    외곽 화면 코너 마커
-  </label>
-
-  <div class="field">
-    <div class="rlabel">
-      <label>프레임 크기</label>
-      <output data-for="frameScale"></output>
-    </div>
-    <input type="range" id="frameScale" min="65" max="120" value="100">
-  </div>
-
-  <div class="two">
-    <div class="field">
-      <label>프레임 가로 위치</label>
-      <input type="range" id="frameX" min="-30" max="30" value="0">
-    </div>
-    <div class="field">
-      <label>프레임 세로 위치</label>
-      <input type="range" id="frameY" min="-30" max="30" value="0">
-    </div>
-  </div>
-
-  <div class="field">
-    <label>드래그할 대상</label>
-    <select id="dragTarget">
-      <option value="bubble">말풍선 · 터치해서 이동</option>
-      <option value="image">일러스트 이동</option>
-      <option value="frame">카메라 / 휴대폰 프레임 이동</option>
-    </select>
-  </div>
-</div>
-</details>
-
-<details class="section" open>
-<summary>ILLUSTRATION · 이미지</summary>
-<div class="section-body">
-  <div class="field">
-    <label>메인 일러스트</label>
-    <input id="mainFile" type="file" accept="image/png,image/jpeg,image/webp">
-  </div>
-  <div class="field">
-    <label>별도 배경 이미지 · 선택 사항</label>
-    <input id="bgFile" type="file" accept="image/png,image/jpeg,image/webp">
-  </div>
-  <div class="hint">
-    배경을 따로 올리지 않으면 메인 일러스트를 확대·흐림 처리해서 배경으로 사용해요.
-    업로드한 이미지는 서버로 전송하지 않아요.
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>메인 이미지 확대</label>
-      <output data-for="imgZoom"></output>
-    </div>
-    <input id="imgZoom" type="range" min="75" max="260" value="100">
-  </div>
-  <div class="two">
-    <div class="field">
-      <label>가로 위치</label>
-      <input id="imgX" type="range" min="-160" max="160" value="0">
-    </div>
-    <div class="field">
-      <label>세로 위치</label>
-      <input id="imgY" type="range" min="-160" max="160" value="0">
-    </div>
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>배경 확대</label>
-      <output data-for="bgZoom"></output>
-    </div>
-    <input id="bgZoom" type="range" min="90" max="240" value="115">
-  </div>
-  <div class="two">
-    <div class="field">
-      <label>배경 가로</label>
-      <input id="bgX" type="range" min="-130" max="130" value="0">
-    </div>
-    <div class="field">
-      <label>배경 세로</label>
-      <input id="bgY" type="range" min="-130" max="130" value="0">
-    </div>
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>배경 흐리기</label>
-      <output data-for="blur"></output>
-    </div>
-    <input id="blur" type="range" min="0" max="35" value="14">
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>배경 어둡기</label>
-      <output data-for="dim"></output>
-    </div>
-    <input id="dim" type="range" min="0" max="75" value="31">
-  </div>
-</div>
-</details>
-
-<details class="section">
-<summary>CAMERA · 촬영 화면</summary>
-<div class="section-body">
-  <label class="check">
-    <input id="showCameraHud" type="checkbox" checked>
-    카메라 UI 표시
-  </label>
-  <label class="check">
-    <input id="showFocus" type="checkbox" checked>
-    중앙 초점 십자선
-  </label>
-  <div class="two">
-    <div class="field">
-      <label>상단 녹화 문구</label>
-      <input id="hudRec" type="text" value="REC">
-    </div>
-    <div class="field">
-      <label>사진 제목</label>
-      <input id="hudTitle" type="text" value="Focus Cut">
-    </div>
-  </div>
-  <div class="field">
-    <label>카메라 정보</label>
-    <input id="hudMeta" type="text" value="ISO 400 · 1/125 · F2.8">
-  </div>
-  <div class="field">
-    <label>날짜 / 시간</label>
-    <input id="hudDate" type="text" value="2024.01.19 00:00">
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>HUD 글씨 크기</label>
-      <output data-for="hudSize"></output>
-    </div>
-    <input id="hudSize" type="range" min="70" max="150" value="100">
-  </div>
-</div>
-</details>
-
-<details class="section" open>
-<summary>GLASS MESSAGE · 말풍선</summary>
-<div class="section-body">
-  <div class="hint">
-    보내는 말풍선은 투명 유리 + 흰 글씨,
-    받는 말풍선은 흰 유리 + 글자 부분이 투명하게 뚫리는 효과예요.
-  </div>
-  <div id="bubbleList"></div>
-  <button class="add-bubble" id="addBubble">＋ 말풍선 추가</button>
-  <div class="field" style="margin-top:14px">
-    <div class="rlabel">
-      <label>유리 테두리 선명도</label>
-      <output data-for="glass"></output>
-    </div>
-    <input id="glass" type="range" min="20" max="100" value="74">
-  </div>
-</div>
-</details>
-
-<details class="section" open>
-<summary>MOTION · 애니메이션</summary>
-<div class="section-body">
-  <div class="field">
-    <label>말풍선 등장 방식</label>
-    <select id="effect">
-      <option value="float">부드럽게 떠오르기</option>
-      <option value="pop">살짝 팝업</option>
-      <option value="fade">페이드</option>
-    </select>
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>말풍선 등장 간격</label>
-      <output data-for="stagger"></output>
-    </div>
-    <input type="range" id="stagger" min="0.3" max="2" step="0.05" value="0.9">
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>각 말풍선 등장 속도</label>
-      <output data-for="reveal"></output>
-    </div>
-    <input type="range" id="reveal" min="0.2" max="1.2" step="0.05" value="0.55">
-  </div>
-  <div class="field">
-    <div class="rlabel">
-      <label>기본 영상 길이</label>
-      <output data-for="duration"></output>
-    </div>
-    <input type="range" id="duration" min="3" max="14" step="0.5" value="6">
-  </div>
-  <div class="hint">
-    말풍선이 많으면 모든 메시지가 보이도록 실제 저장 길이를 자동으로 늘려요.
-  </div>
-  <div class="two">
-    <div class="field">
-      <label>영상 FPS</label>
-      <select id="videoFps">
-        <option value="24">24 FPS</option>
-        <option value="30" selected>30 FPS</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>GIF 화질</label>
-      <select id="gifQuality">
-        <option value="400">가볍게 · 400px</option>
-        <option value="540" selected>보통 · 540px</option>
-        <option value="720">크게 · 720px</option>
-      </select>
-    </div>
-  </div>
-</div>
-</details>
-
-<details class="section">
-<summary>CREDIT · 표시 문구</summary>
-<div class="section-body">
-  <label class="check">
-    <input id="showCredit" type="checkbox" checked>
-    커미션주 표시
-  </label>
-  <div class="field">
-    <label>커미션주 계정</label>
-    <input id="credit" type="text" placeholder="@example · 빈칸이면 표시되지 않음">
-  </div>
-  <div class="hint">
-    화면 오른쪽 아래에
-    <b>commision by @계정</b> 형태로 나타나요.
-    체크를 해제하면 숨겨져요.
-  </div>
-</div>
-</details>
-
-<div class="buttons">
-  <button id="replay">↻ 다시 재생</button>
-  <button id="savePng">PNG 이미지</button>
-  <button id="saveMp4" class="primary">MP4 영상 저장</button>
-  <button id="saveGif">GIF 저장</button>
-</div>
-
-<div id="status" class="status" role="status">
-  말풍선을 눌러 수정하고, 미리보기에서 직접 옮겨 봐요.
-</div>
-
-<div id="saveReady" class="save-ready">
-  <button id="shareSaved">iPhone에서 파일 공유 / 저장</button>
-</div>
-
-<div class="notice">
-  완성물을 게시할 때에는 이 사이트 또는 원 게시물의 출처를 표시해 주세요.
-  PC 편집을 권장합니다.
-  <br>
-  『귀멸의 칼날』, 『나의 히어로 아카데미아』 장르와
-  『가비지타임』 성준수 드림,
-  『괴담에 떨어져도 출근을 해야 하는구나』 이자헌 드림에는 사용할 수 없습니다.
-</div>
-</aside>
-
-<section class="stage">
-  <div class="canvas-wrap">
-    <canvas id="preview" width="720" height="720"
-      aria-label="말풍선 모션 편집 미리보기"></canvas>
-  </div>
-  <div class="stage-caption">
-    <b>DRAG</b> 말풍선 이동　·　
-    <b>SHIFT + DRAG</b> 일러스트 이동
-    <br>
-    별도 애니메이션 플레이어 없이 같은 화면을 영상과 GIF로 저장해요.
-  </div>
-  <div class="stage-cta">
-    <button id="stageReplay">↻ 모션 다시 보기</button>
-  </div>
-</section>
-</main>
-
 <script>
-(() => {
+(()=>{
 'use strict';
-
-const $ = (s,root=document) => root.querySelector(s);
-const $$ = (s,root=document) => Array.from(root.querySelectorAll(s));
-const canvas = $('#preview');
-const ctx = canvas.getContext('2d',{alpha:false});
-const BASE = 720;
-
-let HEIGHT = 720;
-let mode = 'camera';
-let start = performance.now();
-let busy = false;
-let activeBubble = 1;
-let idSeed = 3;
-
-const state = {
-  main:null,
-  bg:null,
-  revision:0,
+const $=q=>document.querySelector(q), $$=q=>[...document.querySelectorAll(q)];
+const canvas=$('#scene'), space=$('#canvasSpace'), status=$('#status');
+const state={
+  w:720,h:1280,bgColor:'#5b6d88',bgShade:22,bgZoom:1,bgBlur:7,bgX:0,bgY:0,
+  pairName:'',phoneScale:93,phoneShade:30,phoneX:0,phoneY:0,
+  artZoom:1,artX:0,artY:0,glassOpacity:21,
+  searchText:'With suggestions',typingSpeed:14,song:'Midnight Hour',artist:'Pair Theme',progress:24,
+  showQueue:false,queueText:'Our Story\nSomething About Us',ddayLabel:'OUR DAY',ddayDate:'',flipSpeed:.24,
+  postUser:'OUR MOMENTS',postCaption:'Our little universe.',postZoom:1,postX:0,postY:0,
+  bubbleFont:25,effect:'pop',firstDelay:.3,stagger:.65,motionDuration:.53,finalHold:1.7,
+  commission:'',showCommission:true,assets:{},
+  widgets:{search:{visible:true,x:33,y:25,scale:100},music:{visible:true,x:64,y:70,scale:100},dday:{visible:true,x:69,y:38,scale:100},post:{visible:false,x:29,y:72,scale:85}},
   bubbles:[
-    {
-      id:1,
-      text:'오늘도 너와 함께.',
-      type:'recv',
-      x:.34,y:.39,width:275,size:23,delay:0
-    },
-    {
-      id:2,
-      text:'오래오래, 우리 둘이.',
-      type:'send',
-      x:.68,y:.54,width:310,size:23,delay:0
-    },
-    {
-      id:3,
-      text:'약속해.',
-      type:'recv',
-      x:.34,y:.68,width:215,size:24,delay:0
-    }
+    {id:1,visible:true,side:'sent',text:'오늘도 너와 함께 ♡',x:65,y:15,width:350,scale:100,extraDelay:0,bold:false},
+    {id:2,visible:true,side:'received',text:'언제나. 🤍',x:35,y:56,width:265,scale:100,extraDelay:0,bold:false}
   ]
 };
-
-const bubbleCache = new Map();
-let backdropCache = {key:'',canvas:null};
-let pointer = null;
-let pendingIOS = null;
-
-const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
-const num = id => Number($('#'+id).value);
-const val = id => $('#'+id).value;
-
-function setStatus(s) {
-  $('#status').textContent = s;
+let uid=3,playing=true,timeStarted=performance.now(),frozenT=0,raf=0,drag=null,rects=[],busy=false,lastShare=null;
+const assetUrls={};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function report(msg){status.textContent=msg;}
+function currentTime(){const tot=window.PairRender?.getTimeline(state).total||6;return playing?((performance.now()-timeStarted)/1000)%Math.max(.5,tot):frozenT;}
+function render(t=Infinity,final=true){if(!window.PairRender){report('export-renderer.js 파일이 없습니다. index.html과 같은 위치에 넣어주세요.');return;}
+  rects=window.PairRender.draw(state,canvas,t,{scale:1,final});
 }
-
-function labels() {
-  for(const e of $$('[data-for]')) {
-    const id = e.dataset.for;
-    const n = num(id);
-
-    e.textContent = ({
-      imgZoom:n+'%',
-      bgZoom:n+'%',
-      blur:n+'px',
-      dim:n+'%',
-      frameScale:n+'%',
-      glass:n+'%',
-      hudSize:n+'%',
-      stagger:n.toFixed(2)+'s',
-      reveal:n.toFixed(2)+'s',
-      duration:n.toFixed(1)+'s'
-    })[id] || String(n);
-  }
+function frame(){if(!busy && !drag)render(currentTime(),false);raf=requestAnimationFrame(frame);}
+function fitPreview(){const maxW=Math.max(100,space.clientWidth-8),maxH=Math.max(100,space.clientHeight-8),z=Math.min(maxW/state.w,maxH/state.h,1.4);
+  canvas.style.width=Math.floor(state.w*z)+'px';canvas.style.height=Math.floor(state.h*z)+'px';}
+function resizeCanvas(){canvas.width=state.w;canvas.height=state.h;$('#sizeLabel').textContent=`${state.w} × ${state.h} · ${$('#ratio').value}`;fitPreview();render(currentTime(),!playing);}
+const ratios={'9:16':[720,1280],'1:1':[900,900],'4:5':[800,1000],'3:4':[750,1000],'16:9':[1280,720]};
+$('#ratio').addEventListener('change',()=>{const v=$('#ratio').value;$('#customSize').style.display=v==='custom'?'grid':'none';if(v==='custom'){state.w=clamp(+$('#customW').value||720,300,1600);state.h=clamp(+$('#customH').value||1280,300,2200);}else [state.w,state.h]=ratios[v];resizeCanvas();});
+for(const id of ['customW','customH'])$('#'+id).addEventListener('input',()=>{if($('#ratio').value!=='custom')return;state.w=clamp(+$('#customW').value||720,300,1600);state.h=clamp(+$('#customH').value||1280,300,2200);resizeCanvas();});
+for(const el of $$('[data-key]')){
+  const key=el.dataset.key;
+  el.addEventListener(el.type==='checkbox'?'change':'input',()=>{
+    state[key]=el.type==='checkbox'?el.checked:el.type==='range'||el.type==='number'?+el.value:el.value;
+    updateValueLabels(); if(!playing)render(Infinity,true);
+  });
 }
-
-function layout() {
-  HEIGHT = Math.round(BASE*num('ratio'));
-  canvas.width = BASE;
-  canvas.height = HEIGHT;
-  backdropCache.key = '';
-  renderAt(Math.min(getDuration(),5));
+function updateValueLabels(){for(const el of $$('[data-val]')){const val=state[el.dataset.val];el.textContent=Number.isInteger(val)?String(val):Number(val).toFixed(2);}}
+const widgetNames={search:'검색창',music:'음악 플레이어',dday:'D-DAY',post:'미니 포스트'};
+function widgetPositionHTML(id){const p=state.widgets[id];return `<div class="mini-heading">크기 · 위치</div><div class="row3">${[['scale','크기',55,150],['x','가로',-10,110],['y','세로',-10,110]].map(([k,label,min,max])=>`<label class="field"><span>${label} <span data-wvalue="${id}:${k}">${p[k]}</span></span><input type="range" min="${min}" max="${max}" value="${p[k]}" data-widget="${id}" data-wkey="${k}"></label>`).join('')}</div>`;}
+for(const id of Object.keys(widgetNames))$(`[data-widget-position="${id}"]`).innerHTML=widgetPositionHTML(id);
+for(const input of $$('[data-widget][data-wkey]')){
+  const id=input.dataset.widget, key=input.dataset.wkey;
+  input.addEventListener(input.type==='checkbox'?'change':'input',()=>{
+    state.widgets[id][key]=input.type==='checkbox'?input.checked:+input.value;
+    const lab=$(`[data-wvalue="${id}:${key}"]`);if(lab)lab.textContent=input.value;
+    if(!playing)render(Infinity,true);
+  });
 }
-
-function ftext(text,max) {
-  return Array.from(text||'').slice(0,max).join('');
+function esc(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');}
+function bubbleHTML(b,i){return `<article class="bubble-item" data-bubble-card="${b.id}">
+ <div class="bubble-top"><strong>MESSAGE ${i+1}</strong><div class="bubble-actions"><label class="switch-line"><input type="checkbox" data-bubble-id="${b.id}" data-bkey="visible" ${b.visible?'checked':''}>표시</label><button type="button" class="small" data-remove="${b.id}">삭제</button></div></div>
+ <div class="row"><label class="field"><span>메시지 종류</span><select data-bubble-id="${b.id}" data-bkey="side"><option value="sent" ${b.side==='sent'?'selected':''}>보낸 메시지 · 투명</option><option value="received" ${b.side==='received'?'selected':''}>받은 메시지 · 흰색</option></select></label><label class="field"><span>등장 추가 지연 (초)</span><input type="number" min="0" max="20" step=".1" value="${b.extraDelay||0}" data-bubble-id="${b.id}" data-bkey="extraDelay"></label></div>
+ <label class="field"><span>말풍선 문구 · 줄바꿈 가능</span><textarea rows="2" data-bubble-id="${b.id}" data-bkey="text">${esc(b.text)}</textarea></label>
+ <label class="switch-line"><input type="checkbox" data-bubble-id="${b.id}" data-bkey="bold" ${b.bold?'checked':''}>굵은 글씨</label>
+ <div class="row3">${[['width','너비',160,490],['scale','크기',55,155],['x','가로',-10,110],['y','세로',-10,110]].map(([k,label,min,max])=>`<label class="field"><span>${label} <span data-bvalue="${b.id}:${k}">${b[k]}</span></span><input type="range" min="${min}" max="${max}" value="${b[k]}" data-bubble-id="${b.id}" data-bkey="${k}"></label>`).join('')}</div>
+ </article>`;}
+function renderBubbleEditor(){$('#bubbleList').innerHTML=state.bubbles.map(bubbleHTML).join('');}
+$('#addBubble').addEventListener('click',()=>{const n=state.bubbles.length;if(n>=16){report('말풍선은 최대 16개까지 추가할 수 있어요.');return;}
+  state.bubbles.push({id:uid++,visible:true,side:n%2?'received':'sent',text:'새로운 메시지 ♡',x:45+(n%3)*7,y:28+(n%5)*7,width:285,scale:100,extraDelay:0,bold:false});renderBubbleEditor();render(Infinity,true);});
+$('#bubbleList').addEventListener('click',e=>{const id=e.target.dataset.remove;if(!id)return;state.bubbles=state.bubbles.filter(b=>b.id!==+id);renderBubbleEditor();render(Infinity,true);});
+function bubbleEvent(e){const el=e.target,id=el.dataset.bubbleId,key=el.dataset.bkey;if(!id||!key)return;const b=state.bubbles.find(x=>x.id===+id);if(!b)return;
+  b[key]=el.type==='checkbox'?el.checked:el.type==='range'||el.type==='number'?+el.value:el.value;
+  const label=$(`[data-bvalue="${id}:${key}"]`);if(label)label.textContent=el.value;
+  if(!playing)render(Infinity,true);
 }
-
-function esc(s) {
-  return String(s).replace(/[&<>"']/g,c=>({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
-  }[c]));
-}
-
-function renderCards(openId=null) {
-  const list = $('#bubbleList');
-
-  list.innerHTML = state.bubbles.map((b,i)=>`
-  <details class="bubble-card" data-id="${b.id}"
-    ${b.id===(openId??activeBubble)?'open':''}>
-    <summary>
-      <span class="bubble-number">${String(i+1).padStart(2,'0')}</span>
-      <strong>${b.type==='send'?'보내기':'받기'}</strong>
-      <span class="bubble-snippet">${esc(b.text||'(빈 말풍선)')}</span>
-    </summary>
-
-    <div class="bubble-form">
-      <div class="field">
-        <label>말풍선 내용</label>
-        <textarea data-key="text" rows="2" maxlength="180"
-          placeholder="여기에 내용을 적어 주세요.">${esc(b.text)}</textarea>
-      </div>
-
-      <div class="two">
-        <div class="field">
-          <label>보내기 / 받기</label>
-          <select data-key="type">
-            <option value="send" ${b.type==='send'?'selected':''}>
-              보내기 · 투명
-            </option>
-            <option value="recv" ${b.type==='recv'?'selected':''}>
-              받기 · 흰색
-            </option>
-          </select>
-        </div>
-        <div class="field">
-          <label>등장 시간 추가</label>
-          <input type="number" data-key="delay"
-            min="-1" max="5" step="0.1" value="${b.delay}">
-        </div>
-      </div>
-
-      <div class="field">
-        <div class="rlabel">
-          <label>말풍선 가로 크기</label>
-          <output data-key-label="width">${b.width}px</output>
-        </div>
-        <input type="range" data-key="width"
-          min="125" max="560" value="${b.width}">
-      </div>
-
-      <div class="field">
-        <div class="rlabel">
-          <label>글씨 크기</label>
-          <output data-key-label="size">${b.size}px</output>
-        </div>
-        <input type="range" data-key="size"
-          min="14" max="38" value="${b.size}">
-      </div>
-
-      <div class="two">
-        <div class="field">
-          <label>가로 위치</label>
-          <input type="range" data-key="x"
-            min="0" max="100" value="${Math.round(b.x*100)}">
-        </div>
-        <div class="field">
-          <label>세로 위치</label>
-          <input type="range" data-key="y"
-            min="0" max="100" value="${Math.round(b.y*100)}">
-        </div>
-      </div>
-
-      <div class="bubble-actions">
-        <button data-action="up" ${i===0?'disabled':''}>↑ 앞 순서</button>
-        <button data-action="down"
-          ${i===state.bubbles.length-1?'disabled':''}>↓ 뒤 순서</button>
-        <button data-action="remove">삭제</button>
-      </div>
-    </div>
-  </details>`).join('');
-}
-
-function updateCardInput(e) {
-  const c = e.target.closest('.bubble-card');
-  const key = e.target.dataset.key;
-  if(!c || !key) return;
-
-  const b = state.bubbles.find(x=>x.id===Number(c.dataset.id));
-  if(!b) return;
-
-  if(key==='text'||key==='type') {
-    b[key] = e.target.value;
-  } else if(key==='delay') {
-    b.delay = clamp(Number(e.target.value)||0,-1,5);
-  } else if(key==='x'||key==='y') {
-    b[key] = Number(e.target.value)/100;
-  } else {
-    b[key] = Number(e.target.value);
-  }
-
-  const l = $(`[data-key-label="${key}"]`,c);
-  if(l) l.textContent = b[key]+'px';
-
-  const s = $('.bubble-snippet',c);
-  if(s&&key==='text') s.textContent = b.text||'(빈 말풍선)';
-
-  const t = $('summary strong',c);
-  if(t&&key==='type') {
-    t.textContent=b.type==='send'?'보내기':'받기';
-  }
-
-  bubbleCache.delete(b.id);
-  activeBubble=b.id;
-}
-
-$('#bubbleList').addEventListener('input',updateCardInput);
-$('#bubbleList').addEventListener('change',updateCardInput);
-
-$('#bubbleList').addEventListener('toggle',e=>{
-  const c=e.target;
-  if(c.matches?.('.bubble-card')&&c.open) {
-    activeBubble=Number(c.dataset.id);
-  }
-},true);
-
-$('#bubbleList').addEventListener('click',e=>{
-  const btn=e.target.closest('button[data-action]');
-  if(!btn)return;
-
-  const card=btn.closest('.bubble-card');
-  const id=Number(card.dataset.id);
-  let i=state.bubbles.findIndex(b=>b.id===id);
-  if(i<0)return;
-
-  const a=btn.dataset.action;
-
-  if(a==='remove') {
-    state.bubbles.splice(i,1);
-    bubbleCache.delete(id);
-    activeBubble=state.bubbles[Math.max(0,i-1)]?.id||-1;
-  } else {
-    const j=i+(a==='up'?-1:1);
-    if(j<0||j>=state.bubbles.length)return;
-    [state.bubbles[i],state.bubbles[j]]=
-      [state.bubbles[j],state.bubbles[i]];
-    activeBubble=id;
-  }
-
-  renderCards(activeBubble);
-  restart();
+$('#bubbleList').addEventListener('input',bubbleEvent);$('#bubbleList').addEventListener('change',bubbleEvent);
+for(const el of $$('[data-img]'))el.addEventListener('change',async()=>{
+  const file=el.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')){report('이미지 파일을 선택해 주세요.');return;}
+  const key=el.dataset.img,url=URL.createObjectURL(file),img=new Image();
+  try{img.src=url;await img.decode();if(assetUrls[key])URL.revokeObjectURL(assetUrls[key]);assetUrls[key]=url;state.assets[key]=img;render(Infinity,true);report('이미지를 불러왔어요.');}
+  catch(error){URL.revokeObjectURL(url);report('이미지를 불러오지 못했어요: '+error.message);}
 });
-
-$('#addBubble').addEventListener('click',()=>{
-  if(state.bubbles.length>=12) {
-    setStatus('말풍선은 최대 12개까지 추가할 수 있어요.');
+$('#replay').addEventListener('click',()=>{playing=true;timeStarted=performance.now();$('#pause').textContent='Ⅱ 일시정지';report('처음부터 다시 재생합니다.');});
+$('#pause').addEventListener('click',()=>{if(playing){frozenT=currentTime();playing=false;$('#pause').textContent='▶ 이어 재생';}else{playing=true;timeStarted=performance.now()-frozenT*1000;$('#pause').textContent='Ⅱ 일시정지';}render(currentTime(),!playing);});
+$('#finalView').addEventListener('click',()=>{playing=false;frozenT=Infinity;$('#pause').textContent='▶ 다시 재생';render(Infinity,true);});
+$('#openAll').addEventListener('click',()=>$$('aside details').forEach(d=>d.open=true));$('#closeAll').addEventListener('click',()=>$$('aside details').forEach(d=>d.open=false));
+function dragPos(e){const box=canvas.getBoundingClientRect();return{x:(e.clientX-box.left)/box.width*state.w,y:(e.clientY-box.top)/box.height*state.h};}
+canvas.addEventListener('pointerdown',e=>{if(busy)return;
+  const p=dragPos(e);render(Infinity,true);
+  const hit=[...rects].reverse().find(r=>p.x>=r.x-20&&p.x<=r.x+r.w+20&&p.y>=r.y-20&&p.y<=r.y+r.h+20);
+  if(!hit)return;drag={id:hit.id,start:p};playing=false;frozenT=Infinity;$('#pause').textContent='▶ 이어 재생';canvas.classList.add('dragging');canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=dragPos(e),dx=(p.x-drag.start.x)/state.w*100,dy=(p.y-drag.start.y)/state.h*100;
+  if(drag.id.startsWith('bubble:')){const b=state.bubbles.find(b=>b.id===+drag.id.split(':')[1]);if(!b)return;b.x=clamp(b.x+dx,-10,110);b.y=clamp(b.y+dy,-10,110);
+    for(const k of ['x','y']){const el=$(`[data-bubble-id="${b.id}"][data-bkey="${k}"]`);if(el)el.value=b[k];const lab=$(`[data-bvalue="${b.id}:${k}"]`);if(lab)lab.textContent=Math.round(b[k]);}
+  }else{const b=state.widgets[drag.id];if(!b)return;b.x=clamp(b.x+dx,-10,110);b.y=clamp(b.y+dy,-10,110);
+    for(const k of ['x','y']){const el=$(`[data-widget="${drag.id}"][data-wkey="${k}"]`);if(el)el.value=b[k];const lab=$(`[data-wvalue="${drag.id}:${k}"]`);if(lab)lab.textContent=Math.round(b[k]);}
+  }drag.start=p;render(Infinity,true);
+});
+function endDrag(){drag=null;canvas.classList.remove('dragging');}
+canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);canvas.addEventListener('lostpointercapture',endDrag);
+const tick=()=>new Promise(ok=>setTimeout(ok,0));
+function exportCanvas(t,scale=1){const out=document.createElement('canvas');window.PairRender.draw(state,out,t,{scale,final:t===Infinity});return out;}
+async function blobFromCanvas(c,type='image/png',quality=1){return await new Promise((res,rej)=>c.toBlob(v=>v?res(v):rej(new Error('파일 변환을 지원하지 않는 브라우저입니다.')),type,quality));}
+async function offerDownload(blob,name){const file=new File([blob],name,{type:blob.type||'application/octet-stream'});
+  if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1)){
+    lastShare={file,name};$('#shareBtn').style.display='block';report(`저장 파일 준비 완료 (${(blob.size/1048576).toFixed(1)} MB). 아래 '아이폰 · 파일 공유 / 저장'을 누르세요.`);
     return;
   }
-
-  const i=state.bubbles.length;
-  const id=++idSeed;
-
-  state.bubbles.push({
-    id,
-    text:'새로운 메시지',
-    type:i%2===0?'recv':'send',
-    x:i%2===0?.34:.67,
-    y:clamp(.25+i*.11,.17,.82),
-    width:260,
-    size:23,
-    delay:0
-  });
-
-  activeBubble=id;
-  renderCards(id);
-  restart();
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),120000);
+  report(`${name} 저장을 시작했어요. (${(blob.size/1048576).toFixed(1)} MB)`);
+}
+$('#shareBtn').addEventListener('click',async()=>{if(!lastShare)return;
+  try{if(navigator.share&&navigator.canShare?.({files:[lastShare.file]})){await navigator.share({files:[lastShare.file],title:lastShare.name});return;}
+    const url=URL.createObjectURL(lastShare.file),a=document.createElement('a');a.href=url;a.download=lastShare.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){if(e.name!=='AbortError')report('공유 오류: '+e.message);}
 });
-
-$('#expandAll').addEventListener('click',()=>{
-  $$('details.section,details.bubble-card').forEach(x=>x.open=true);
-});
-$('#collapseAll').addEventListener('click',()=>{
-  $$('details.section,details.bubble-card').forEach(x=>x.open=false);
-});
-
-$$('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
-  mode=b.dataset.mode;
-  $$('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));
-  restart();
+async function withSaving(fn){if(busy)return;busy=true;cancelAnimationFrame(raf);
+  for(const el of $$('#savePng,#saveGif,#saveMp4'))el.disabled=true;
+  try{await document.fonts?.ready;await fn();}catch(err){console.error(err);report('저장 실패: '+(err?.message||err));}
+  finally{busy=false;for(const el of $$('#savePng,#saveGif,#saveMp4'))el.disabled=false;raf=requestAnimationFrame(frame);}
+}
+$('#savePng').addEventListener('click',()=>withSaving(async()=>{report('최종 장면을 PNG로 만들고 있어요…');const c=exportCanvas(Infinity,1);
+  const blob=await blobFromCanvas(c);await offerDownload(blob,'phone-screen-motion-maker.png');}));
+async function gifWorkerUrl(){const url='https://cdn.jsdelivr.net/npm/gif.js.optimized@1.0.1/dist/gif.worker.js';const r=await fetch(url);if(!r.ok)throw new Error('GIF 작업 스크립트를 읽지 못했어요.');return URL.createObjectURL(new Blob([await r.text()],{type:'text/javascript'}));}
+$('#saveGif').addEventListener('click',()=>withSaving(async()=>{
+  if(!window.GIF)throw new Error('GIF 라이브러리(gif.js)를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');
+  let workerUrl=null;
+  try{
+    workerUrl=await gifWorkerUrl();const fps=+$('#fps').value,scale=+$('#renderScale').value,duration=window.PairRender.getTimeline(state).total;
+    const n=Math.max(2,Math.ceil(duration*fps));const w=Math.round(state.w*scale/2)*2,h=Math.round(state.h*scale/2)*2;
+    const gif=new GIF({workers:2,quality:6,width:w,height:h,workerScript:workerUrl,repeat:0});
+    for(let i=0;i<n;i++){const t=Math.min(i/fps,duration);const c=exportCanvas(t,scale);gif.addFrame(c,{copy:true,delay:Math.round(1000/fps)});
+      if(i%4===0){report(`GIF 프레임 생성 중 ${i+1} / ${n}`);await tick();}
+    }
+    const file=await new Promise((res,rej)=>{gif.on('finished',res);gif.on('progress',v=>report(`GIF 압축 중 ${Math.round(v*100)}%`));gif.on('abort',()=>rej(new Error('GIF 작업이 중단됐어요.')));gif.render();});
+    await offerDownload(file,'phone-screen-motion-maker.gif');
+  }finally{if(workerUrl)URL.revokeObjectURL(workerUrl);}
 }));
-
-function loadFile(id,key) {
-  $('#'+id).addEventListener('change',e=>{
-    const file=e.target.files?.[0];
-    if(!file)return;
-
-    if(!file.type.startsWith('image/')) {
-      setStatus('이미지 파일을 선택해 주세요.');
-      return;
+async function videoMp4(){
+  const frameRate=30,scale=+$('#renderScale').value,duration=window.PairRender.getTimeline(state).total;
+  const width=Math.round(state.w*scale/2)*2,height=Math.round(state.h*scale/2)*2,n=Math.ceil(duration*frameRate);
+  if(!window.VideoEncoder || !window.VideoFrame) return await mediaRecorderMp4(width,height,duration,frameRate);
+  let mod;
+  try{mod=await import('https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/+esm');}catch(e){throw new Error('MP4 변환 라이브러리를 불러오지 못했습니다.');}
+  const {Muxer,ArrayBufferTarget}=mod;
+  const cfgs=['avc1.42001f','avc1.4d001f','avc1.640028'].map(codec=>({codec,width,height,bitrate:6500000,framerate:frameRate,avc:{format:'avc'}}));
+  let config=null;for(const cfg of cfgs){try{const ok=await VideoEncoder.isConfigSupported(cfg);if(ok.supported){config=ok.config;break;}}catch{}}
+  if(!config)return await mediaRecorderMp4(width,height,duration,frameRate);
+  const muxer=new Muxer({target:new ArrayBufferTarget(),video:{codec:'avc',width,height,frameRate},fastStart:'in-memory'});
+  let err=null;const encoder=new VideoEncoder({output:(chunk,meta)=>muxer.addVideoChunk(chunk,meta),error:e=>{err=e;}});
+  try{
+    encoder.configure(config);let frameCanvas;
+    for(let i=0;i<n;i++){
+      if(err)throw err;frameCanvas=exportCanvas(Math.min(i/frameRate,duration),scale);
+      const vf=new VideoFrame(frameCanvas,{timestamp:Math.round(i*1e6/frameRate),duration:Math.round(1e6/frameRate)});
+      encoder.encode(vf,{keyFrame:i%30===0});vf.close();
+      if(i%8===0){report(`MP4 영상 생성 중 ${i+1}/${n}`);await tick();while(encoder.encodeQueueSize>12){await new Promise(r=>setTimeout(r,25));if(err)throw err;}}
     }
-
-    const url=URL.createObjectURL(file);
-    const img=new Image();
-
-    img.onload=()=>{
-      URL.revokeObjectURL(url);
-      state[key]=img;
-      state.revision++;
-      backdropCache.key='';
-      restart();
-      setStatus('이미지를 불러왔어요.');
-    };
-
-    img.onerror=()=>{
-      URL.revokeObjectURL(url);
-      setStatus('이미지를 읽지 못했어요.');
-    };
-
-    img.src=url;
-  });
+    await encoder.flush();muxer.finalize();
+    return new Blob([muxer.target.buffer],{type:'video/mp4'});
+  }finally{encoder.close();}
 }
-
-loadFile('mainFile','main');
-loadFile('bgFile','bg');
-
-$$('input:not([type=file]),select').forEach(el=>{
-  if(el.closest('.bubble-card')||
-     el.id==='ratio'||el.id==='dragTarget')return;
-
-  el.addEventListener('input',()=>{
-    labels();
-
-    if([
-      'imgZoom','bgZoom','bgX','bgY',
-      'blur','dim','imgX','imgY'
-    ].includes(el.id))backdropCache.key='';
-
-    if(el.id==='glass')bubbleCache.clear();
-    if(!busy)renderAt(0);
-  });
-
-  el.addEventListener('change',()=>{
-    if(!busy&&[
-      'stagger','reveal','duration','effect'
-    ].includes(el.id))restart();
-  });
-});
-
-$$('input[type=text]').forEach(el=>el.addEventListener('input',()=>{
-  if(!busy)renderAt(0);
-}));
-
-$('#ratio').addEventListener('change',()=>{
-  layout();
-  restart();
-});
-
-const font='Inter,Pretendard,"Apple SD Gothic Neo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
-
-function rr(c,x,y,w,h,r) {
-  r=Math.max(0,Math.min(r,w/2,h/2));
-  c.beginPath();
-  c.moveTo(x+r,y);
-  c.arcTo(x+w,y,x+w,y+h,r);
-  c.arcTo(x+w,y+h,x,y+h,r);
-  c.arcTo(x,y+h,x,y,r);
-  c.arcTo(x,y,x+w,y,r);
-  c.closePath();
-}
-
-function roundFill(c,x,y,w,h,r,color) {
-  c.fillStyle=color;
-  rr(c,x,y,w,h,r);
-  c.fill();
-}
-
-function fitImage(c,img,r,z=1,ox=0,oy=0,cover=true) {
-  if(!img?.naturalWidth)return;
-
-  const sc=(cover?Math.max:Math.min)(
-    r.w/img.naturalWidth,
-    r.h/img.naturalHeight
-  )*z;
-
-  const dw=img.naturalWidth*sc;
-  const dh=img.naturalHeight*sc;
-
-  c.drawImage(
-    img,
-    r.x+r.w/2+ox-dw/2,
-    r.y+r.h/2+oy-dh/2,
-    dw,dh
-  );
-}
-
-function backgroundKey() {
-  return [
-    state.revision,HEIGHT,val('bgZoom'),
-    val('bgX'),val('bgY'),val('blur')
-  ].join('|');
-}
-
-function buildBackground() {
-  const key=backgroundKey();
-
-  if(backdropCache.key===key&&backdropCache.canvas) {
-    return backdropCache.canvas;
+async function mediaRecorderMp4(width,height,duration,fps){
+  if(!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream || !MediaRecorder.isTypeSupported('video/mp4')){
+    throw new Error('이 브라우저는 MP4 인코딩을 지원하지 않습니다. 최신 Chrome 또는 MP4를 지원하는 Safari에서 이용해 주세요.');
   }
-
-  const out=document.createElement('canvas');
-  out.width=BASE;
-  out.height=HEIGHT;
-
-  const c=out.getContext('2d');
-  let g=c.createLinearGradient(0,0,BASE,HEIGHT);
-  g.addColorStop(0,'#9297a6');
-  g.addColorStop(.45,'#5c626f');
-  g.addColorStop(1,'#222534');
-
-  c.fillStyle=g;
-  c.fillRect(0,0,BASE,HEIGHT);
-
-  const img=state.bg||state.main;
-  const blur=num('blur');
-
-  if(img) {
-    if(blur>0) {
-      const w=Math.max(40,Math.round(BASE/(1+blur*.29)));
-      const h=Math.max(40,Math.round(HEIGHT*w/BASE));
-      const s=document.createElement('canvas');
-
-      s.width=w;
-      s.height=h;
-
-      const sc=s.getContext('2d');
-      sc.imageSmoothingEnabled=true;
-      sc.imageSmoothingQuality='high';
-      sc.fillStyle='#6a6972';
-      sc.fillRect(0,0,w,h);
-
-      const z=num('bgZoom')/100;
-      fitImage(
-        sc,img,{x:0,y:0,w,h},z,
-        num('bgX')*w/BASE,
-        num('bgY')*h/HEIGHT
-      );
-
-      c.imageSmoothingEnabled=true;
-      c.imageSmoothingQuality='high';
-      c.drawImage(s,0,0,BASE,HEIGHT);
-    } else {
-      fitImage(
-        c,img,{x:0,y:0,w:BASE,h:HEIGHT},
-        num('bgZoom')/100,
-        num('bgX'),num('bgY')
-      );
-    }
-  } else {
-    c.save();
-    c.globalAlpha=.15;
-    c.strokeStyle='white';
-    c.lineWidth=2;
-
-    for(let i=0;i<8;i++) {
-      c.beginPath();
-      c.arc(BASE*.5,HEIGHT*.48,110+i*52,0,Math.PI*2);
-      c.stroke();
-    }
-
-    c.restore();
+  const c=exportCanvas(0,width/state.w),stream=c.captureStream(fps),chunks=[];
+  const mr=new MediaRecorder(stream,{mimeType:'video/mp4',videoBitsPerSecond:6500000});
+  const ready=new Promise((res,rej)=>{mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};mr.onerror=e=>rej(e.error||new Error('MediaRecorder 오류'));mr.onstop=()=>res(new Blob(chunks,{type:'video/mp4'}));});
+  mr.start(1000);const start=performance.now();let frame=0;
+  while((performance.now()-start)<duration*1000){const time=(performance.now()-start)/1000;window.PairRender.draw(state,c,time,{scale:width/state.w,final:false});
+    if(frame++%15===0)report(`실시간 MP4 녹화 ${Math.round(time)} / ${Math.ceil(duration)}초`);
+    await new Promise(r=>setTimeout(r,Math.max(5,1000/fps-5)));
   }
-
-  backdropCache={key,canvas:out};
-  return out;
+  mr.stop();const blob=await ready;stream.getTracks().forEach(t=>t.stop());return blob;
 }
-
-function sceneRect() {
-  const sc=num('frameScale')/100;
-  const xoff=num('frameX')*BASE/100;
-  const yoff=num('frameY')*HEIGHT/100;
-
-  let w,h;
-
-  if(mode==='camera') {
-    w=BASE*.75*sc;
-    h=Math.min(
-      HEIGHT*.74*sc,
-      w*(HEIGHT>1100?1.45:1.04)
-    );
-  } else {
-    w=Math.min(BASE*.62,(HEIGHT*.79)/1.89)*sc;
-    h=w*1.89;
-  }
-
-  w=Math.min(BASE-32,w);
-  h=Math.min(HEIGHT-42,h);
-
-  const x=clamp((BASE-w)/2+xoff,14,BASE-w-14);
-  const y=clamp((HEIGHT-h)/2+yoff,17,HEIGHT-h-17);
-
-  return {x,y,w,h};
-}
-
-function drawBackdrop(c) {
-  c.drawImage(buildBackground(),0,0);
-
-  c.fillStyle=`rgba(8,9,13,${num('dim')/100})`;
-  c.fillRect(0,0,BASE,HEIGHT);
-
-  const v=c.createRadialGradient(
-    BASE*.50,HEIGHT*.47,BASE*.07,
-    BASE*.5,HEIGHT*.5,Math.max(BASE,HEIGHT)*.72
-  );
-
-  v.addColorStop(0,'rgba(0,0,0,0)');
-  v.addColorStop(1,'rgba(0,0,0,.24)');
-
-  c.fillStyle=v;
-  c.fillRect(0,0,BASE,HEIGHT);
-}
-
-function drawSharp(c,r,corner) {
-  c.save();
-  rr(c,r.x,r.y,r.w,r.h,corner);
-  c.clip();
-
-  let g=c.createLinearGradient(
-    r.x,r.y,r.x+r.w,r.y+r.h
-  );
-
-  g.addColorStop(0,'#d1cfd3');
-  g.addColorStop(1,'#747883');
-
-  c.fillStyle=g;
-  c.fillRect(r.x,r.y,r.w,r.h);
-
-  if(state.main) {
-    fitImage(
-      c,state.main,r,
-      num('imgZoom')/100,
-      num('imgX'),num('imgY')
-    );
-  } else {
-    c.save();
-    c.textAlign='center';
-    c.fillStyle='rgba(255,255,255,.73)';
-    c.font=`600 18px ${font}`;
-    c.fillText(
-      'YOUR ILLUSTRATION',
-      r.x+r.w/2,r.y+r.h/2
-    );
-    c.font=`400 12px ${font}`;
-    c.fillText(
-      '왼쪽에서 이미지를 추가해 주세요',
-      r.x+r.w/2,r.y+r.h/2+26
-    );
-    c.restore();
-  }
-
-  const shade=c.createLinearGradient(
-    0,r.y,0,r.y+r.h
-  );
-
-  shade.addColorStop(0,'rgba(0,0,0,.09)');
-  shade.addColorStop(.4,'rgba(0,0,0,0)');
-  shade.addColorStop(1,'rgba(0,0,0,.15)');
-
-  c.fillStyle=shade;
-  c.fillRect(r.x,r.y,r.w,r.h);
-  c.restore();
-}
-
-function drawCorner(c,x,y,sx,sy,L,color,width) {
-  c.strokeStyle=color;
-  c.lineWidth=width;
-  c.lineCap='square';
-  c.beginPath();
-  c.moveTo(x+sx*L,y);
-  c.lineTo(x,y);
-  c.lineTo(x,y+sy*L);
-  c.stroke();
-}
-
-function drawScreenCorners(c) {
-  if(!$('#showCorners').checked)return;
-
-  const p=BASE*.036;
-  const L=BASE*.044;
-  const col='rgba(255,255,255,.86)';
-
-  c.save();
-  c.shadowColor='rgba(0,0,0,.5)';
-  c.shadowBlur=3;
-
-  drawCorner(c,p,p,1,1,L,col,2.3);
-  drawCorner(c,BASE-p,p,-1,1,L,col,2.3);
-  drawCorner(c,p,HEIGHT-p,1,-1,L,col,2.3);
-  drawCorner(c,BASE-p,HEIGHT-p,-1,-1,L,col,2.3);
-
-  c.restore();
-}
-
-function write(
-  c,t,x,y,size,weight=500,
-  align='left',color='white',limit=9999
-) {
-  c.save();
-  c.textAlign=align;
-  c.textBaseline='middle';
-  c.fillStyle=color;
-  c.font=`${weight} ${size}px ${font}`;
-
-  let str=t||'';
-
-  while(c.measureText(str).width>limit&&str.length>1) {
-    str=str.slice(0,-2)+'…';
-  }
-
-  c.fillText(str,x,y);
-  c.restore();
-}
-
-function drawCamera(c,r) {
-  c.save();
-  c.shadowColor='rgba(0,0,0,.28)';
-  c.shadowBlur=30;
-  c.shadowOffsetY=15;
-
-  roundFill(
-    c,r.x-3,r.y-3,r.w+6,r.h+6,
-    2,'rgba(0,0,0,.08)'
-  );
-
-  c.restore();
-  drawSharp(c,r,0);
-
-  c.save();
-  c.strokeStyle='rgba(255,255,255,.24)';
-  c.lineWidth=1.2;
-  c.strokeRect(r.x,r.y,r.w,r.h);
-
-  const L=Math.min(r.w,r.h)*.14;
-
-  drawCorner(c,r.x,r.y,1,1,L,'#fff',2.6);
-  drawCorner(c,r.x+r.w,r.y,-1,1,L,'#fff',2.6);
-  drawCorner(c,r.x,r.y+r.h,1,-1,L,'#fff',2.6);
-  drawCorner(c,r.x+r.w,r.y+r.h,-1,-1,L,'#fff',2.6);
-
-  if($('#showFocus').checked) {
-    let a=Math.min(r.w,r.h)*.037;
-    let cx=r.x+r.w/2;
-    let cy=r.y+r.h/2;
-
-    c.shadowColor='rgba(0,0,0,.45)';
-    c.shadowBlur=5;
-    c.strokeStyle='#fff';
-    c.lineWidth=1.8;
-    c.beginPath();
-    c.moveTo(cx-a,cy);
-    c.lineTo(cx+a,cy);
-    c.moveTo(cx,cy-a);
-    c.lineTo(cx,cy+a);
-    c.stroke();
-  }
-
-  c.restore();
-
-  if($('#showCameraHud').checked) {
-    const scale=num('hudSize')/100;
-    const top=HEIGHT*.05;
-    const rec=val('hudRec').trim();
-
-    c.save();
-    c.shadowColor='rgba(0,0,0,.8)';
-    c.shadowBlur=4;
-
-    if(rec) {
-      c.fillStyle=rec.toUpperCase()==='REC'
-        ?'#ff5a69':'#fff';
-
-      c.beginPath();
-      c.arc(34,top+2,4*scale,0,Math.PI*2);
-      c.fill();
-
-      write(c,rec,44,top+2,11*scale,640);
-    }
-
-    write(
-      c,
-      val('hudMeta')+'   '+val('hudDate'),
-      BASE-35,top+2,10.5*scale,460,
-      'right','white',BASE*.56
-    );
-
-    const bot=HEIGHT*.947;
-
-    write(
-      c,val('hudTitle'),
-      35,bot-10,19*scale,760,
-      'left','white',BASE*.44
-    );
-
-    write(
-      c,val('hudDate'),
-      35,bot+12,10*scale,480,
-      'left','white',BASE*.45
-    );
-
-    c.restore();
-  }
-}
-
-function drawPhone(c,r) {
-  c.save();
-  c.shadowColor='rgba(0,0,0,.46)';
-  c.shadowBlur=46;
-  c.shadowOffsetY=20;
-
-  roundFill(
-    c,r.x,r.y,r.w,r.h,
-    59,'rgba(220,222,230,.3)'
-  );
-
-  c.restore();
-
-  let outer=c.createLinearGradient(
-    r.x,r.y,r.x+r.w,r.y+r.h
-  );
-
-  outer.addColorStop(0,'rgba(255,255,255,.8)');
-  outer.addColorStop(.36,'rgba(186,190,204,.45)');
-  outer.addColorStop(1,'rgba(247,248,255,.71)');
-
-  roundFill(c,r.x,r.y,r.w,r.h,59,outer);
-
-  c.save();
-  c.strokeStyle='rgba(255,255,255,.73)';
-  c.lineWidth=1.5;
-  rr(c,r.x+1,r.y+1,r.w-2,r.h-2,58);
-  c.stroke();
-  c.restore();
-
-  const inset=Math.max(8,r.w*.025);
-
-  const screen={
-    x:r.x+inset,
-    y:r.y+inset,
-    w:r.w-2*inset,
-    h:r.h-2*inset
-  };
-
-  drawSharp(c,screen,51);
-
-  c.save();
-  rr(c,screen.x,screen.y,screen.w,screen.h,51);
-  c.clip();
-
-  roundFill(
-    c,
-    r.x+r.w*.39,r.y+16,
-    r.w*.22,17,10,
-    'rgba(11,12,16,.95)'
-  );
-
-  const size=Math.max(10,r.w*.035);
-
-  write(
-    c,'9:41',
-    screen.x+screen.w*.1,
-    screen.y+29,size,700
-  );
-
-  write(
-    c,'●  ▮▮  ▰',
-    screen.x+screen.w*.89,
-    screen.y+29,size*.9,650,'right'
-  );
-
-  roundFill(
-    c,
-    screen.x+screen.w*.36,
-    screen.y+screen.h-17,
-    screen.w*.28,4,2,
-    'rgba(255,255,255,.9)'
-  );
-
-  c.restore();
-}
-
-function drawCredit(c) {
-  if(!$('#showCredit').checked)return;
-
-  let v=val('credit').trim();
-  if(!v)return;
-
-  v=v.startsWith('@')?v:'@'+v;
-
-  write(
-    c,'commision by '+v,
-    BASE-34,HEIGHT-40,11,540,
-    'right','white',BASE*.46
-  );
-}
-
-function wrapLines(c,str,maxWidth,maxLines=6) {
-  str=String(str??'').replace(/\r/g,'');
-
-  const lines=[];
-
-  for(const paragraph of str.split('\n')) {
-    let line='';
-
-    for(const char of Array.from(paragraph)) {
-      const test=line+char;
-
-      if(c.measureText(test).width>maxWidth&&line) {
-        lines.push(line.trimEnd());
-        line=char;
-      } else {
-        line=test;
-      }
-
-      if(lines.length>=maxLines)break;
-    }
-
-    if(lines.length>=maxLines)break;
-
-    lines.push(line||' ');
-
-    if(lines.length>=maxLines)break;
-  }
-
-  if(!lines.length)lines.push(' ');
-
-  if(
-    lines.length>=maxLines &&
-    lines.join('').length<str.replace(/\n/g,'').length
-  ) {
-    lines[maxLines-1]=lines[maxLines-1].slice(0,-1)+'…';
-  }
-
-  return lines.slice(0,maxLines);
-}
-
-function bubblePath(c,x,y,w,h,type) {
-  const r=Math.min(25,h*.42);
-
-  c.beginPath();
-  c.moveTo(x+r,y);
-  c.lineTo(x+w-r,y);
-  c.quadraticCurveTo(x+w,y,x+w,y+r);
-  c.lineTo(x+w,y+h-r);
-  c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-
-  if(type==='send') {
-    c.lineTo(x+w-34,y+h);
-    c.quadraticCurveTo(
-      x+w-25,y+h+5,
-      x+w-14,y+h+15
-    );
-    c.quadraticCurveTo(
-      x+w-19,y+h+4,
-      x+w-20,y+h
-    );
-  }
-
-  c.lineTo(x+r,y+h);
-
-  if(type==='recv') {
-    c.lineTo(x+24,y+h);
-    c.quadraticCurveTo(
-      x+19,y+h+4,
-      x+10,y+h+15
-    );
-    c.quadraticCurveTo(
-      x+14,y+h+4,
-      x+14,y+h
-    );
-  }
-
-  c.quadraticCurveTo(x,y+h,x,y+h-r);
-  c.lineTo(x,y+r);
-  c.quadraticCurveTo(x,y,x+r,y);
-  c.closePath();
-}
-
-function makeBubble(b) {
-  const key=[
-    b.text,b.type,b.width,b.size,num('glass')
-  ].join('♥');
-
-  let obj=bubbleCache.get(b.id);
-  if(obj?.key===key)return obj;
-
-  const width=b.width;
-  const pad=Math.round(b.size*.86);
-  const lh=b.size*1.38;
-
-  const tmp=document.createElement('canvas');
-  const tc=tmp.getContext('2d');
-
-  tc.font=`${b.type==='send'?550:680} ${b.size}px ${font}`;
-
-  const lines=wrapLines(
-    tc,b.text,width-pad*2,6
-  );
-
-  const bh=Math.max(
-    60,Math.ceil(lines.length*lh+pad*2)
-  );
-
-  const buffer=23;
-  const iw=width+buffer*2;
-  const ih=bh+buffer*2+19;
-  const scale=2;
-
-  tmp.width=Math.ceil(iw*scale);
-  tmp.height=Math.ceil(ih*scale);
-
-  const c=tmp.getContext('2d');
-  c.scale(scale,scale);
-
-  const x=buffer;
-  const y=buffer;
-
-  // Received letters are actual transparent cut-outs.
-  c.save();
-  c.shadowColor='rgba(0,0,0,.20)';
-  c.shadowBlur=17;
-  c.shadowOffsetY=8;
-
-  if(b.type==='recv') {
-    const g=c.createLinearGradient(0,y,0,y+bh);
-    g.addColorStop(0,'rgba(255,255,255,.97)');
-    g.addColorStop(.52,'rgba(250,250,255,.89)');
-    g.addColorStop(1,'rgba(223,228,237,.93)');
-    c.fillStyle=g;
-  } else {
-    const g=c.createLinearGradient(
-      x,y,x+width,y+bh
-    );
-    g.addColorStop(0,'rgba(73,79,96,.24)');
-    g.addColorStop(.42,'rgba(49,57,74,.18)');
-    g.addColorStop(1,'rgba(31,38,53,.25)');
-    c.fillStyle=g;
-  }
-
-  bubblePath(c,x,y,width,bh,b.type);
-  c.fill();
-  c.restore();
-
-  c.save();
-  bubblePath(c,x,y,width,bh,b.type);
-  c.clip();
-
-  const shine=c.createLinearGradient(
-    x,y,x+width,y+bh
-  );
-
-  shine.addColorStop(0,'rgba(255,255,255,.4)');
-  shine.addColorStop(.22,'rgba(255,255,255,.04)');
-  shine.addColorStop(.68,'rgba(255,255,255,0)');
-  shine.addColorStop(1,'rgba(255,255,255,.23)');
-
-  c.fillStyle=shine;
-  c.fillRect(x,y,width,bh+16);
-  c.restore();
-
-  const clarity=num('glass')/100;
-
-  c.save();
-  bubblePath(c,x,y,width,bh,b.type);
-  c.lineWidth=2.6;
-  c.strokeStyle=`rgba(255,255,255,${.32+.63*clarity})`;
-  c.stroke();
-
-  c.lineWidth=.85;
-  c.strokeStyle=b.type==='recv'
-    ?'rgba(155,165,187,.55)'
-    :'rgba(230,235,247,.48)';
-  c.stroke();
-  c.restore();
-
-  c.save();
-  c.textAlign='center';
-  c.textBaseline='middle';
-  c.font=`${b.type==='send'?550:710} ${b.size}px ${font}`;
-
-  const first=y+pad+lh*.5;
-
-  if(b.type==='recv') {
-    c.strokeStyle='rgba(77,80,96,.26)';
-    c.lineWidth=2.6;
-
-    lines.forEach((line,i)=>{
-      c.strokeText(
-        line,x+width/2,first+i*lh
-      );
-    });
-
-    c.globalCompositeOperation='destination-out';
-    c.fillStyle='#000';
-
-    lines.forEach((line,i)=>{
-      c.fillText(
-        line,x+width/2,first+i*lh
-      );
-    });
-  } else {
-    c.lineWidth=2.4;
-    c.strokeStyle='rgba(25,28,35,.27)';
-    c.shadowColor='rgba(0,0,0,.48)';
-    c.shadowBlur=6;
-
-    lines.forEach((line,i)=>{
-      c.strokeText(
-        line,x+width/2,first+i*lh
-      );
-    });
-
-    c.shadowBlur=3;
-    c.fillStyle='#fff';
-
-    lines.forEach((line,i)=>{
-      c.fillText(
-        line,x+width/2,first+i*lh
-      );
-    });
-  }
-
-  c.restore();
-
-  obj={
-    key,
-    canvas:tmp,
-    drawWidth:iw,
-    drawHeight:ih,
-    bodyHeight:bh,
-    lines
-  };
-
-  bubbleCache.set(b.id,obj);
-  return obj;
-}
-
-function bubblePlacement(b) {
-  const obj=makeBubble(b);
-  const w=b.width;
-  const h=obj.bodyHeight;
-
-  return {
-    x:clamp(b.x*BASE-w/2,6,BASE-w-6),
-    y:clamp(b.y*HEIGHT-h/2,14,HEIGHT-h-30),
-    w,h,obj
-  };
-}
-
-function bubbleStart(i,b) {
-  return Math.max(
-    0,.55+i*num('stagger')+Number(b.delay||0)
-  );
-}
-
-function getDuration() {
-  const last=state.bubbles.reduce(
-    (m,b,i)=>Math.max(
-      m,bubbleStart(i,b)+num('reveal')
-    ),
-    .7
-  );
-
-  return Math.max(num('duration'),last+1.15);
-}
-
-function smooth(t) {
-  t=clamp(t,0,1);
-  return 1-(1-t)**3;
-}
-
-function bubbleMotion(t,begin) {
-  let p=clamp(
-    (t-begin)/num('reveal'),0,1
-  );
-
-  let e=smooth(p);
-  let dx=0,dy=0,scale=1;
-
-  if(val('effect')==='float') {
-    dy=18*(1-e);
-    scale=.975+.025*e;
-  } else if(val('effect')==='pop') {
-    scale=.90+.10*e+
-      .024*Math.sin(Math.PI*p)*(1-p);
-    dy=9*(1-e);
-  } else {
-    scale=.99+.01*e;
-  }
-
-  return {
-    opacity:p===0?0:Math.min(1,p*1.8),
-    dx,dy,scale
-  };
-}
-
-function drawBubbles(c,t) {
-  for(let i=0;i<state.bubbles.length;i++) {
-    const b=state.bubbles[i];
-    const mot=bubbleMotion(
-      t,bubbleStart(i,b)
-    );
-
-    if(mot.opacity<=0)continue;
-
-    const p=bubblePlacement(b);
-    const width=p.obj.drawWidth;
-    const height=p.obj.drawHeight;
-    const cx=p.x+p.w/2;
-    const cy=p.y+p.h/2;
-
-    c.save();
-    c.globalAlpha=mot.opacity;
-    c.translate(cx,cy);
-    c.scale(mot.scale,mot.scale);
-    c.translate(-cx,-cy);
-
-    c.drawImage(
-      p.obj.canvas,
-      p.x-23+mot.dx,
-      p.y-23+mot.dy,
-      width,height
-    );
-
-    c.restore();
-  }
-}
-
-function drawScene(c,t=0) {
-  c.clearRect(0,0,BASE,HEIGHT);
-  drawBackdrop(c);
-
-  const r=sceneRect();
-
-  if(mode==='camera') {
-    drawCamera(c,r);
-  } else {
-    drawPhone(c,r);
-  }
-
-  drawScreenCorners(c);
-  drawBubbles(c,t);
-  drawCredit(c);
-}
-
-function renderTo(target,t) {
-  const c=target.getContext('2d',{alpha:false});
-
-  c.save();
-  c.setTransform(
-    target.width/BASE,0,0,
-    target.height/HEIGHT,0,0
-  );
-  drawScene(c,t);
-  c.restore();
-}
-
-function renderAt(t) {
-  if(busy)return;
-  renderTo(canvas,t);
-}
-
-function restart() {
-  start=performance.now();
-  if(!busy)renderAt(0);
-}
-
-function loop(now) {
-  if(!busy) {
-    const duration=getDuration();
-    const cycle=duration+.6;
-    const t=Math.min(
-      ((now-start)/1000)%cycle,
-      duration
-    );
-
-    renderTo(canvas,t);
-  }
-
-  requestAnimationFrame(loop);
-}
-
-function pointerPos(e) {
-  const r=canvas.getBoundingClientRect();
-
-  return {
-    x:(e.clientX-r.left)*BASE/r.width,
-    y:(e.clientY-r.top)*HEIGHT/r.height
-  };
-}
-
-canvas.addEventListener('pointerdown',e=>{
-  if(busy)return;
-
-  const p=pointerPos(e);
-  const forcedImage=e.shiftKey;
-  const chosen=forcedImage?'image':val('dragTarget');
-
-  let id=null;
-
-  if(chosen==='bubble') {
-    for(let i=state.bubbles.length-1;i>=0;i--) {
-      const b=state.bubbles[i];
-      const r=bubblePlacement(b);
-
-      if(
-        p.x>=r.x-7 &&
-        p.x<=r.x+r.w+7 &&
-        p.y>=r.y-8 &&
-        p.y<=r.y+r.h+20
-      ) {
-        id=b.id;
-        break;
-      }
-    }
-  }
-
-  if(chosen==='bubble'&&id===null)return;
-
-  const b=state.bubbles.find(b=>b.id===id);
-
-  pointer={
-    x:p.x,
-    y:p.y,
-    chosen,
-    id,
-    origB:b?{x:b.x,y:b.y}:null,
-    imgX:num('imgX'),
-    imgY:num('imgY'),
-    frameX:num('frameX'),
-    frameY:num('frameY')
-  };
-
-  if(id!==null&&activeBubble!==id) {
-    activeBubble=id;
-    renderCards(id);
-  }
-
-  canvas.setPointerCapture(e.pointerId);
-});
-
-canvas.addEventListener('pointermove',e=>{
-  if(!pointer||busy)return;
-
-  const p=pointerPos(e);
-  const dx=p.x-pointer.x;
-  const dy=p.y-pointer.y;
-
-  if(pointer.chosen==='bubble') {
-    const b=state.bubbles.find(
-      b=>b.id===pointer.id
-    );
-    if(!b)return;
-
-    b.x=clamp(pointer.origB.x+dx/BASE,.01,.99);
-    b.y=clamp(pointer.origB.y+dy/HEIGHT,.01,.99);
-
-    const card=$(
-      `.bubble-card[data-id="${b.id}"]`
-    );
-
-    if(card) {
-      const x=$('[data-key="x"]',card);
-      const y=$('[data-key="y"]',card);
-
-      if(x)x.value=Math.round(b.x*100);
-      if(y)y.value=Math.round(b.y*100);
-    }
-  } else if(pointer.chosen==='image') {
-    $('#imgX').value=clamp(
-      pointer.imgX+dx,-160,160
-    );
-    $('#imgY').value=clamp(
-      pointer.imgY+dy,-160,160
-    );
-  } else {
-    $('#frameX').value=clamp(
-      pointer.frameX+dx/BASE*100,-30,30
-    );
-    $('#frameY').value=clamp(
-      pointer.frameY+dy/HEIGHT*100,-30,30
-    );
-  }
-});
-
-[
-  'pointerup',
-  'pointercancel',
-  'lostpointercapture'
-].forEach(k=>{
-  canvas.addEventListener(k,()=>{pointer=null});
-});
-
-canvas.addEventListener('wheel',e=>{
-  if(busy)return;
-
-  e.preventDefault();
-
-  const el=$('#imgZoom');
-
-  el.value=clamp(
-    Number(el.value)+(e.deltaY<0?5:-5),
-    Number(el.min),
-    Number(el.max)
-  );
-
-  labels();
-},{passive:false});
-
-$('#replay').onclick=
-$('#stageReplay').onclick=()=>{
-  restart();
-  setStatus('처음부터 다시 재생해요.');
-};
-
-function dataDownload(blob,name) {
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-
-  a.href=url;
-  a.download=name;
-
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(()=>{
-    URL.revokeObjectURL(url);
-  },60000);
-}
-
-async function deliver(blob,name) {
-  if(/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-    pendingIOS={blob,name};
-    $('#saveReady').classList.add('show');
-    setStatus(
-      '파일이 준비됐어요. 아래의 iPhone 저장 버튼을 눌러 공유창에서 저장해 주세요.'
-    );
-  } else {
-    dataDownload(blob,name);
-    setStatus(name+' 저장을 시작했어요.');
-  }
-}
-
-$('#shareSaved').addEventListener('click',async()=>{
-  if(!pendingIOS)return;
-
-  const f=new File(
-    [pendingIOS.blob],
-    pendingIOS.name,
-    {type:pendingIOS.blob.type}
-  );
-
-  try {
-    if(
-      navigator.share&&
-      (!navigator.canShare||
-      navigator.canShare({files:[f]}))
-    ) {
-      await navigator.share({files:[f]});
-      return;
-    }
-  } catch(e) {
-    if(e.name==='AbortError')return;
-  }
-
-  dataDownload(
-    pendingIOS.blob,
-    pendingIOS.name
-  );
-});
-
-function setBusy(v) {
-  busy=v;
-
-  $$('#savePng,#saveMp4,#saveGif').forEach(x=>{
-    x.disabled=v;
-  });
-
-  if(!v)restart();
-}
-
-async function wait(ms=0) {
-  return new Promise(r=>setTimeout(r,ms));
-}
-
-function sizeCanvas(width) {
-  const c=document.createElement('canvas');
-
-  c.width=Math.max(
-    2,Math.round(width/2)*2
-  );
-
-  c.height=Math.max(
-    2,Math.round(c.width*HEIGHT/BASE/2)*2
-  );
-
-  return c;
-}
-
-function canvasToBlob(c,type) {
-  return new Promise((resolve,reject)=>{
-    c.toBlob(b=>
-      b?resolve(b):reject(new Error('파일 생성 실패')),
-      type
-    );
-  });
-}
-
-$('#savePng').addEventListener('click',async()=>{
-  if(busy)return;
-
-  setBusy(true);
-
-  try {
-    setStatus('이미지 렌더링 중...');
-
-    const c=sizeCanvas(num('pngSize'));
-    renderTo(c,getDuration());
-
-    await deliver(
-      await canvasToBlob(c,'image/png'),
-      'glass-message.png'
-    );
-  } catch(e) {
-    setStatus('PNG 저장 실패: '+e.message);
-  } finally {
-    setBusy(false);
-  }
-});
-
-function mp4Mime() {
-  if(!window.MediaRecorder)return '';
-
-  return [
-    'video/mp4;codecs=avc1.42E01E',
-    'video/mp4;codecs=avc1',
-    'video/mp4;codecs=h264',
-    'video/mp4'
-  ].find(t=>MediaRecorder.isTypeSupported(t))||'';
-}
-
-async function encodeMp4WebCodecs(fps) {
-  if(
-    !window.VideoEncoder||
-    !window.VideoFrame||
-    !window.Mp4Muxer
-  ) {
-    throw new Error(
-      'WebCodecs 인코더를 사용할 수 없습니다.'
-    );
-  }
-
-  const c=sizeCanvas(900);
-  const w=c.width;
-  const h=c.height;
-
-  const config={
-    codec:'avc1.420028',
-    width:w,
-    height:h,
-    bitrate:4200000,
-    framerate:fps,
-    avc:{format:'avc'}
-  };
-
-  const support=await VideoEncoder.isConfigSupported(config);
-
-  if(!support.supported) {
-    throw new Error(
-      'H.264 인코딩을 지원하지 않는 브라우저입니다.'
-    );
-  }
-
-  const muxer=new Mp4Muxer.Muxer({
-    target:new Mp4Muxer.ArrayBufferTarget(),
-    video:{
-      codec:'avc',
-      width:w,
-      height:h
-    },
-    fastStart:'in-memory'
-  });
-
-  let err=null;
-
-  const enc=new VideoEncoder({
-    output:(chunk,meta)=>{
-      muxer.addVideoChunk(chunk,meta);
-    },
-    error:e=>{
-      err=e;
-    }
-  });
-
-  try {
-    enc.configure(config);
-
-    const total=getDuration();
-    const frames=Math.ceil(total*fps);
-
-    for(let i=0;i<frames;i++) {
-      if(err)throw err;
-
-      renderTo(c,Math.min(total,i/fps));
-
-      const frame=new VideoFrame(c,{
-        timestamp:Math.round(i*1e6/fps),
-        duration:Math.round(1e6/fps)
-      });
-
-      enc.encode(frame,{
-        keyFrame:i%fps===0
-      });
-
-      frame.close();
-
-      if(enc.encodeQueueSize>8) {
-        await enc.flush();
-      }
-
-      if(i%15===0) {
-        setStatus(
-          `MP4 만드는 중 · ${Math.round((i+1)/frames*100)}%`
-        );
-        await wait(0);
-      }
-    }
-
-    await enc.flush();
-
-    if(err)throw err;
-
-    muxer.finalize();
-
-    return new Blob(
-      [muxer.target.buffer],
-      {type:'video/mp4'}
-    );
-  } finally {
-    try{enc.close()}catch(e){}
-  }
-}
-
-async function encodeMp4Recorder(fps) {
-  const mime=mp4Mime();
-
-  if(!mime||!HTMLCanvasElement.prototype.captureStream) {
-    throw new Error(
-      '이 브라우저의 MP4 녹화 기능을 사용할 수 없어요. 최신 Chrome 또는 Safari를 이용해 주세요.'
-    );
-  }
-
-  const c=sizeCanvas(900);
-  const stream=c.captureStream(fps);
-  const parts=[];
-
-  let stoppedResolve;
-  let stoppedReject;
-
-  const done=new Promise((res,rej)=>{
-    stoppedResolve=res;
-    stoppedReject=rej;
-  });
-
-  let recorder;
-
-  try {
-    recorder=new MediaRecorder(stream,{
-      mimeType:mime,
-      videoBitsPerSecond:4500000
-    });
-  } catch(e) {
-    stream.getTracks().forEach(t=>t.stop());
-    throw e;
-  }
-
-  recorder.ondataavailable=e=>{
-    if(e.data.size)parts.push(e.data);
-  };
-
-  recorder.onerror=e=>{
-    stoppedReject(e.error||new Error('녹화 실패'));
-  };
-
-  recorder.onstop=stoppedResolve;
-
-  try {
-    recorder.start(200);
-
-    const d=getDuration();
-    const started=performance.now();
-    let last=0;
-
-    while(last<d&&recorder.state==='recording') {
-      const elapsed=(performance.now()-started)/1000;
-      last=Math.min(d,elapsed);
-
-      renderTo(c,last);
-
-      if(
-        Math.floor(elapsed*2)!==
-        Math.floor((elapsed-.03)*2)
-      ) {
-        setStatus(
-          `MP4 녹화 중 · ${Math.round(last/d*100)}%`
-        );
-      }
-
-      await new Promise(r=>requestAnimationFrame(r));
-    }
-
-    renderTo(c,d);
-    await wait(160);
-
-    if(recorder.state==='recording') {
-      recorder.stop();
-    }
-
-    await done;
-
-    const blob=new Blob(parts,{
-      type:'video/mp4'
-    });
-
-    if(!blob.size)throw new Error('빈 영상 파일');
-
-    return blob;
-  } finally {
-    if(recorder.state==='recording') {
-      recorder.stop();
-    }
-
-    stream.getTracks().forEach(t=>t.stop());
-  }
-}
-
-$('#saveMp4').addEventListener('click',async()=>{
-  if(busy)return;
-
-  setBusy(true);
-
-  try {
-    setStatus('MP4 인코더를 준비하고 있어요.');
-
-    const fps=num('videoFps');
-    let blob;
-
-    try {
-      blob=await encodeMp4WebCodecs(fps);
-    } catch(err) {
-      console.warn(
-        'WebCodecs MP4 fallback:',err
-      );
-      blob=await encodeMp4Recorder(fps);
-    }
-
-    await deliver(blob,'glass-message.mp4');
-  } catch(e) {
-    console.error(e);
-    setStatus(
-      'MP4 저장 실패: '+e.message+
-      '\nGIF 저장은 별도로 시도할 수 있어요.'
-    );
-  } finally {
-    setBusy(false);
-  }
-});
-
-async function gifWorker() {
-  const url=
-    'https://cdn.jsdelivr.net/npm/gif.js.optimized@1.0.1/dist/gif.worker.js';
-
-  const res=await fetch(url);
-
-  if(!res.ok) {
-    throw new Error('GIF 인코딩 파일 다운로드 실패');
-  }
-
-  return URL.createObjectURL(
-    await res.blob()
-  );
-}
-
-async function encodeGif() {
-  if(typeof window.GIF!=='function') {
-    throw new Error(
-      'GIF 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'
-    );
-  }
-
-  const worker=await gifWorker();
-
-  try {
-    const c=sizeCanvas(num('gifQuality'));
-    const d=getDuration();
-    const fps=d>14?8:d>9?10:12;
-    const frames=Math.ceil(d*fps);
-
-    const gif=new GIF({
-      workers:2,
-      quality:12,
-      workerScript:worker,
-      width:c.width,
-      height:c.height,
-      repeat:0,
-      background:'#15151a'
-    });
-
-    for(let i=0;i<frames;i++) {
-      renderTo(c,i/fps);
-
-      gif.addFrame(c,{
-        copy:true,
-        delay:Math.round(1000/fps)
-      });
-
-      if(i%8===0) {
-        setStatus(
-          `GIF 프레임 만드는 중 · ${Math.round((i+1)/frames*100)}%`
-        );
-        await wait(0);
-      }
-    }
-
-    return await new Promise((resolve,reject)=>{
-      gif.on('progress',p=>{
-        setStatus(
-          `GIF 압축 중 · ${Math.round(p*100)}%`
-        );
-      });
-
-      gif.on('finished',resolve);
-
-      gif.on('abort',()=>{
-        reject(new Error('GIF 작업이 취소됐어요.'));
-      });
-
-      try {
-        gif.render();
-      } catch(e) {
-        reject(e);
-      }
-    });
-  } finally {
-    setTimeout(()=>{
-      URL.revokeObjectURL(worker);
-    },1500);
-  }
-}
-
-$('#saveGif').addEventListener('click',async()=>{
-  if(busy)return;
-
-  setBusy(true);
-
-  try {
-    setStatus('GIF를 준비하고 있어요.');
-
-    await deliver(
-      await encodeGif(),
-      'glass-message.gif'
-    );
-  } catch(e) {
-    console.error(e);
-    setStatus('GIF 저장 실패: '+e.message);
-  } finally {
-    setBusy(false);
-  }
-});
-
-labels();
-renderCards(activeBubble);
-layout();
-requestAnimationFrame(loop);
-
+$('#saveMp4').addEventListener('click',()=>withSaving(async()=>{report('MP4 인코더 준비 중…');const blob=await videoMp4();await offerDownload(blob,'phone-screen-motion-maker.mp4');}));
+if(!window.PairRender)report('export-renderer.js를 index.html과 같은 폴더에 업로드해 주세요.');
+renderBubbleEditor();updateValueLabels();window.addEventListener('resize',fitPreview);new ResizeObserver(fitPreview).observe(space);resizeCanvas();raf=requestAnimationFrame(frame);
 })();
 </script>
 </body>
